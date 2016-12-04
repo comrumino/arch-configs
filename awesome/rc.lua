@@ -106,6 +106,27 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- Create a textclock widget
 mytextclock = awful.widget.textclock()
 
+-- Create battery widget
+--[[
+    batteryWidget = wibox.widget.textbox()
+    batteryWidget:set_text("  " .. io.open("/sys/class/power_supply/BAT0/capacity", "r"):read() .. "%  ")
+    batteryWidgetTimer = timer({ timeout = 5 })
+    batteryWidgetTimer:connect_signal("timeout",
+      function()
+        batCapacity = assert(io.open("/sys/class/power_supply/BAT0/capacity", "r"))
+        batStatus   = assert(io.open("/sys/class/power_supply/BAT0/status", "r"))
+        capacity    = batCapacity:read()
+        status      = batStatus:read()
+        batteryWidget:set_text("  " .. capacity .. "%  ")
+        if tonumber(capacity) < 7 and status:match("Discharging")then
+          naughty.notify({ text = "Charge me up, I'm feeling low", timeout = 3 })
+        end
+        batCapacity:close()
+        batStatus:close()
+      end
+    )
+    batteryWidgetTimer:start()
+]]--
 -- Create a wibox for each screen and add it
 mywibox = {}
 mypromptbox = {}
@@ -186,6 +207,7 @@ for s = 1, screen.count() do
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
     right_layout:add(mytextclock)
+    --right_layout:add(batteryWidget)
     --right_layout:add(mylayoutbox[s])
 
     -- Now bring it all together (with the tasklist in the middle)
@@ -208,15 +230,15 @@ root.buttons(awful.util.table.join(
 
 -- {{{ Key bindings
 globalkeys = awful.util.table.join(
-    awful.key({ modkey, "Control" }, "l",     function () awful.util.spawn("xscreensaver-command -lock") end),
-    awful.key({ modkey, "Shift"   }, ";",     function () awful.util.spawn("xdotool click 1") end),
-    awful.key({ modkey,           }, "v",     function () awful.util.spawn("xdotool click --delay 500 2") end),
-    awful.key({ modkey,           }, "c",     function () awful.util.spawn("xsel -x") end),
+    awful.key({ modkey, "Control"  }, "l",     function () awful.util.spawn("xscreensaver-command -lock") end),
+    awful.key({ modkey,            }, "v",     function () awful.util.spawn("xdotool click 2") end),
+    awful.key({ "Control", "Shift" }, "e",     function () awful.util.spawn("xdotool click --clearmodifiers --delay 100 1") end),
+    awful.key({ modkey,            }, "c",     function () awful.util.spawn("xsel -x") end),
     awful.key({ modkey, "Control" }, "=",     function () awful.util.spawn('amixer -D pulse sset Master 5%+') end),
     awful.key({ modkey, "Control" }, "-",  function () awful.util.spawn('amixer -D pulse sset Master 5%-') end),
-    awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
-    awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
-    awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
+    awful.key({ modkey,            }, "Left",   awful.tag.viewprev       ),
+    awful.key({ modkey,            }, "Right",  awful.tag.viewnext       ),
+    awful.key({ modkey,            }, "Escape", awful.tag.history.restore),
 
     awful.key({ modkey,           }, "j",
         function ()
@@ -458,7 +480,7 @@ client.connect_signal("focus", function(c)
 client.connect_signal("unfocus", function(c)
                                 if c.instance == terminal then
                                     c.border_color = beautiful.border_tnormal
-                                    c.opacity = 0.50
+                                    c.opacity = 0.5
                                 else
                                     c.border_color = beautiful.border_normal
                                     c.opacity = 1
