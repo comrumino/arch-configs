@@ -61,6 +61,7 @@ local layouts =
 -- }}}
 
 -- {{{ launch programs related to terminal (urxvt)
+-- TODO review this
 awful.util.spawn_with_shell("xcompmgr &")
 -- }}}
 
@@ -207,7 +208,11 @@ for s = 1, screen.count() do
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
     right_layout:add(mytextclock)
+<<<<<<< HEAD
     right_layout:add(batteryWidget)
+=======
+    --right_layout:add(batteryWidget)
+>>>>>>> 04396d67e92f3c3f870f34aa7c0728f344b01e18
     --right_layout:add(mylayoutbox[s])
 
     -- Now bring it all together (with the tasklist in the middle)
