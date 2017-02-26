@@ -10,6 +10,10 @@ local beautiful = require("beautiful")
 local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
+-- strayArch
+local home = os.getenv("HOME")
+local widgets = require "widgets"
+
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -38,7 +42,7 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init(os.getenv("HOME") .. "/.config/awesome/themes/strayArch/theme.lua")
+beautiful.init(home .. "/.config/awesome/themes/strayArch/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "uxterm"
@@ -102,6 +106,9 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 -- {{{ Wibar
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
+-- strayArch
+mybattery = wibox.widget.textbox()
+
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = awful.util.table.join(
@@ -201,6 +208,7 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
             mykeyboardlayout,
             wibox.widget.systray(),
+	    mybattery,
             mytextclock,
             s.mylayoutbox,
         },
@@ -269,8 +277,6 @@ globalkeys = awful.util.table.join(
               {description = "reload awesome", group = "awesome"}),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit,
               {description = "quit awesome", group = "awesome"}),
-
-    -- strayArch below
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)          end,
               {description = "increase master width factor", group = "layout"}),
     awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)          end,
@@ -298,7 +304,6 @@ globalkeys = awful.util.table.join(
                   end
               end,
               {description = "restore minimized", group = "client"}),
-    -- strayArch above
 
     -- Prompt
     awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
@@ -454,7 +459,7 @@ awful.rules.rules = {
 
     -- Add titlebars to normal clients and dialogs
     { rule_any = {type = { "normal", "dialog" }
-      }, properties = { titlebars_enabled = true }
+      }, properties = { titlebars_enabled = false }
     },
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
@@ -533,6 +538,7 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- }}}
 
 -- strayArch below
+--[[
 client.connect_signal("focus", function(c)
                                 c.opacity = 1
                                 if c.instance == terminal then
@@ -552,20 +558,19 @@ client.connect_signal("unfocus", function(c)
                                     c.opacity = 1
                                 end
                              end)
-
---[[
-naughty.notify({
-    text = c.instance,
-    title = "title",
-    position = "top_right",
-    timeout = 5,
-    icon="/path/to/image",
-    fg="#ffggcc",
-    bg="#bbggcc",
-    screen = 1,
-    ontop = false,
-    run = function () awful.util.spawn("wicd-client") end
-})
 --]]
--- }}}
+
+-- battery
+if widgets.is_mobile() then
+mybattery_timer = timer({timeout = 3})
+  local right_layout = wibox.layout.fixed.horizontal()
+  right_layout:add(mybattery)
+
+  mybattery_timer:connect_signal("timeout", function()
+    mybattery:set_text(widgets.battery_text())
+  end)
+  mybattery_timer:start()
+  mybattery:set_text(widgets.battery_text())
+end
+
 -- strayArch above
