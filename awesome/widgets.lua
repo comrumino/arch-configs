@@ -1,7 +1,6 @@
 --.config/awesome/widgets.lua
 
 local naughty = require("naughty")
-local beautiful = require("beautiful")
 
 local widgets = {}
 local modules_file = '/proc/modules'
@@ -64,8 +63,8 @@ local function is_discharging()
 end
 
 function widgets.battery_notify()
-  if tonumber(capacity()) < 11 and is_discharing() then
-    naughty.notify({ text = "Charge me up, I'm feeling low", timeout = 3 })
+  if (tonumber(capacity()) < 11 and is_discharging()) then
+    naughty.notify({ text = "Charge me up, I'm feeling low", timeout = 2 })
   end
 end
 

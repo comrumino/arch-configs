@@ -568,6 +568,7 @@ mybattery_timer = timer({timeout = 3})
 
   mybattery_timer:connect_signal("timeout", function()
     mybattery:set_text(widgets.battery_text())
+    widgets.battery_notify()
   end)
   mybattery_timer:start()
   mybattery:set_text(widgets.battery_text())
