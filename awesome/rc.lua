@@ -226,6 +226,22 @@ root.buttons(awful.util.table.join(
 
 -- {{{ Key bindings
 globalkeys = awful.util.table.join(
+    awful.key({ modkey, "Control" }, "l",     function () awful.util.spawn("xscreensaver-command -lock") end,
+              {description="lock screen", group="spawn"}),
+    awful.key({ modkey, "Control" }, "Left",     function () awful.util.spawn("xdotool click 1") end,
+              {description="Simulate left click", group="spawn"}),
+    awful.key({ modkey, "Control" }, "Right",     function () awful.util.spawn("xdotool click 2") end,
+              {description="Simulate right click", group="spawn"}),
+    awful.key({ modkey, "Control" }, "Up",     function () awful.util.spawn("xdotool click 4") end,
+              {description="Simulate mouse scroll up", group="spawn"}),
+    awful.key({ modkey, "Control" }, "Down",     function () awful.util.spawn("xdotool click 5") end,
+              {description="Simulate mouse scroll down", group="spawn"}),
+    awful.key({ modkey,           }, "c",     function () awful.util.spawn("xsel -x") end,
+              {description="", group="spawn"}),
+    awful.key({ modkey, "Control" }, "=",     function () awful.util.spawn('amixer -D pulse sset Master 5%+') end,
+              {description="", group="spawn"}),
+    awful.key({ modkey, "Control" }, "-",  function () awful.util.spawn('amixer -D pulse sset Master 5%-') end,
+              {description="", group="spawn"}),
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
