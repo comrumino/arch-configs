@@ -230,7 +230,7 @@ globalkeys = awful.util.table.join(
               {description="lock screen", group="spawn"}),
     awful.key({ modkey, "Control" }, "Left",     function () awful.util.spawn("xdotool click 1") end,
               {description="Simulate left click", group="spawn"}),
-    awful.key({ modkey, "Control" }, "Right",     function () awful.util.spawn("xdotool click 2") end,
+    awful.key({ modkey,           }, "v",     function () awful.util.spawn("xdotool click 2") end,
               {description="Simulate right click", group="spawn"}),
     awful.key({ modkey, "Control" }, "Up",     function () awful.util.spawn("xdotool click 4") end,
               {description="Simulate mouse scroll up", group="spawn"}),
