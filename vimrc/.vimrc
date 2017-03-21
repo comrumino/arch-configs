@@ -2,16 +2,17 @@ set nocompatible              " be iMproved, required
 set number                    " Enable line numbers
 set ruler                     " Turn on the ruler
 syntax on                     " Syntax highlighting
-filetype off                  " required
+"filetype off                  " required
+filetype plugin on
 
 " set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
+set rtp+=~/.vim/bundle/Vundle.vim/
 call vundle#begin()
 
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
-" Note: Manually install powerline/fonts
+" Note: pkgbuild for powerline fonts
 Plugin 'tpope/vim-fugitive'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
@@ -20,7 +21,7 @@ Plugin 'scrooloose/syntastic'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
-filetype plugin indent on    " required
+"filetype plugin indent on    " required
 " To ignore plugin indent changes, instead use:
 "filetype plugin on
 "
@@ -83,3 +84,10 @@ let g:syntastic_check_on_wq = 0
 
 let g:syntastic_python_checkers = ['pylint']
 let g:syntastic_javascript_checkers = ['jshint']
+let g:syntastic_html_checkers = ['w3']
+
+"
+"
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
+nnoremap ,c  :SyntasticCheck<CR>
+nnoremap ,t  :SyntasticToggleMode<CR>
