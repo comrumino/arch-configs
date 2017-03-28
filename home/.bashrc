@@ -19,3 +19,5 @@ PS1='[\u@\h \W]\$ '
 
 GIT_BC="/usr/share/git/completion/git-completion.bash"
 [[ -f ${GIT_BC} ]] && source ${GIT_BC}
+
+[[ -f "/usr/bin/vmware" ]] && export VMWARE_USE_SHIPPED_LIBS='yes'
