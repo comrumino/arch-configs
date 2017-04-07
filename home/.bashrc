@@ -17,7 +17,9 @@ PS1='[\u@\h \W]\$ '
 [[ -n "${XTERM_VERSION}" ]] && transset-df --id "${WINDOWID}" > /dev/null
 [[ -d "/home/$(whoami)/bin" ]] && PATH=${PATH}:~/bin
 
+# Configure git bash completion and editor selection
 GIT_BC="/usr/share/git/completion/git-completion.bash"
 [[ -f ${GIT_BC} ]] && source ${GIT_BC}
+[[ -f "/usr/bin/vim" ]] && export VISUAL="vim" && export EDITOR="${VISUAL}"
 
 [[ -f "/usr/bin/vmware" ]] && export VMWARE_USE_SHIPPED_LIBS='yes'
