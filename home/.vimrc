@@ -1,6 +1,8 @@
 set nocompatible              " be iMproved, required
 set number                    " Enable line numbers
 set ruler                     " Turn on the ruler
+set softtabstop=0 noexpandtab
+set shiftwidth=4
 syntax on                     " Syntax highlighting
 "filetype off                  " required
 filetype plugin on
@@ -18,6 +20,7 @@ Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'Lokaltog/vim-powerline'
 Plugin 'scrooloose/syntastic'
+Plugin 'Yggdroot/indentLine'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -38,6 +41,7 @@ call vundle#end()            " required
 set laststatus=2 " Always display the statusline in all windows
 set showtabline=2 " Always display the tabline, even if there is only one tab
 set noshowmode " Hide the default mode text (e.g. -- INSERT -- below the statusline)
+
 " air-line
 let g:airline_powerline_fonts = 1
 let g:powerline_pycmd = 'py3'
