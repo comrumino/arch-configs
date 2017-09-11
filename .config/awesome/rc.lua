@@ -13,6 +13,7 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- strayArch
 local home = os.getenv("HOME")
 local widgets = require "widgets"
+local multi_tap = require "multi_tap"
 
 
 -- {{{ Error handling
@@ -226,6 +227,8 @@ root.buttons(awful.util.table.join(
 
 -- {{{ Key bindings
 globalkeys = awful.util.table.join(
+    awful.key({}, "Alt_R", multi_tap.routine,
+              {description="lock screen", group="spawn"}),
     awful.key({ modkey, "Control" }, "l",     function () awful.util.spawn("xscreensaver-command -lock") end,
               {description="lock screen", group="spawn"}),
     awful.key({ modkey, "Control" }, "Left",     function () awful.util.spawn("xdotool click 1") end,
@@ -236,8 +239,6 @@ globalkeys = awful.util.table.join(
               {description="Simulate mouse scroll up", group="spawn"}),
     awful.key({ modkey, "Control" }, "Down",     function () awful.util.spawn("xdotool click 5") end,
               {description="Simulate mouse scroll down", group="spawn"}),
-    awful.key({ modkey,           }, "c",     function () awful.util.spawn("xsel -x") end,
-              {description="", group="spawn"}),
     awful.key({ modkey, "Control" }, "=",     function () awful.util.spawn('amixer -D pulse sset Master 5%+') end,
               {description="", group="spawn"}),
     awful.key({ modkey, "Control" }, "-",  function () awful.util.spawn('amixer -D pulse sset Master 5%-') end,
@@ -591,3 +592,4 @@ mybattery_timer = timer({timeout = 3})
 end
 
 -- strayArch above
+-- vim:se ts=2 sw=2 et:
