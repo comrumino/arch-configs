@@ -7,23 +7,19 @@ syntax on                     " Syntax highlighting
 "filetype off                  " required
 filetype plugin on
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim/
-call vundle#begin()
-
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
+" set the runtime path to include for plugins
+call plug#begin('~/.vim/plugged')
 
 " Note: pkgbuild for powerline fonts
-Plugin 'tpope/vim-fugitive'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'Lokaltog/vim-powerline'
-Plugin 'scrooloose/syntastic'
-Plugin 'Yggdroot/indentLine'
+Plug 'tpope/vim-fugitive'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'Lokaltog/vim-powerline'
+Plug 'scrooloose/syntastic'
+Plug 'Yggdroot/indentLine'
 
 " All of your Plugins must be added before the following line
-call vundle#end()            " required
+call plug#end()            " required
 "filetype plugin indent on    " required
 " To ignore plugin indent changes, instead use:
 "filetype plugin on
