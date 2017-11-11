@@ -76,7 +76,7 @@ theme.titlebar_maximized_button_focus_inactive  = theme.path .. "/titlebar/maxim
 theme.titlebar_maximized_button_normal_active = theme.path .. "/titlebar/maximized_normal_active.png"
 theme.titlebar_maximized_button_focus_active  = theme.path .. "/titlebar/maximized_focus_active.png"
 
-theme.wallpaper = theme.path .. "/wallpapers/archstrike-background-dark.png"
+theme.wallpaper = theme.path .. "/wallpapers/efb12-efb10-merge-archstrike.png"
 -- You can use your own layout icons like this:
 theme.layout_fairh = theme.path .. "/layouts/fairhw.png"
 theme.layout_fairv = theme.path .. "/layouts/fairvw.png"
