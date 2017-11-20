@@ -15,8 +15,10 @@ Plug 'tpope/vim-fugitive'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'Lokaltog/vim-powerline'
-Plug 'scrooloose/syntastic'
 Plug 'Yggdroot/indentLine'
+Plug 'neomake/neomake'
+Plug 'romainl/vim-qf'
+Plug 'airblade/vim-gitgutter'
 call plug#end() 
 
 " airline
@@ -50,20 +52,43 @@ let g:airline_symbols.linenr = ''
 " powerline
 let g:Powerline_symbols = 'fancy'
 
-" syntastic
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 1
-let g:syntastic_python_checkers = ['pylint']
-let g:syntastic_javascript_checkers = ['jshint']
-let g:syntastic_html_checkers = ['w3']
-let g:syntastic_mode_map = {'mode': 'active', 'active_filetypes': [], 'passive_filetypes': []}
+" :help neomake
+call neomake#configure#automake('rw', 750)
+let g:neomake_c_enabled_makers = ['gcc']
+let g:neomake_cpp_enabled_makers = ['g++']
+let g:neomake_css_enabled_makers = ['csslint'] " npm install csslint
+let g:neomake_html_enabled_makers = ['html-angular-validate'] " npm install html-angular-validate
+let g:neomake_java_enabled_makers = ['javac']
+let g:neomake_javascript_enabled_makers = ['eslint']
+let g:neomake_lua_enabled_makers = ['luac']
+let g:neomake_python_flake8_maker = {'args': ['--format=default'],
+    \'errorformat': '%E%f:%l: could not compile,%-Z%p^,%A%f:%l:%c: %t%n %m,%A%f:%l: %t%n %m,%-G%.%#',}
+let g:neomake_python_flake8_exe = '/usr/bin/flake8-python2'
+let g:neomake_python_enabled_makers = ['flake8'] " pacman -S flake8
+let g:neomake_scss_enabled_makers = ['scss_lint']
+let g:neomake_sh_enabled_makers = ['shellcheck'] " pacman -S shellcheck
+let g:neomake_yaml_enabled_makers = ['yamllint'] " AUR yamllint
+let g:neomake_place_signs = 0
+let g:neomake_highlight_columns = 0 "help neomake-highlight
+let g:neomake_highlight_lines = 0
+let g:neomake_open_list = 0
+
+" :help gitgutter
+let g:gitgutter_sign_added = 'a'
+let g:gitgutter_sign_modified = 'm'
+let g:gitgutter_sign_removed = 'r'
+let g:gitgutter_sign_removed_first_line = 'r'
+let g:gitgutter_sign_modified_removed = 'mr'
+let g:gitgutter_signs = 1
+let g:gitgutter_highlight_lines = 1
+highlight myGitColor ctermbg=232
+highlight myGitBlack ctermbg=0
+highlight link GitGutterAddLine myGitColor
+highlight link GitGutterChangeLine myGitColor
+highlight link GitGutterDeleteLine myGitBlack
+highlight link GitGutterChangeDeleteLine myGitColor
+
 
 " map key(s) to command
-nnoremap ,c  :SyntasticCheck<CR>
-nnoremap ,t  :SyntasticToggleMode<CR>
-nnoremap ,r  :SyntasticReset<CR>
+nnoremap ,o :lopen<CR>
+nnoremap ,c :lclose<CR>
