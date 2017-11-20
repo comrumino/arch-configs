@@ -1,0 +1,8 @@
+[flake8]
+#E***/W***: pep8 
+#F***: PyFlakes
+#C9**: McCabe 
+#N8**: pep8-naming
+format=default
+ignore=E221
+max-line-length=119
