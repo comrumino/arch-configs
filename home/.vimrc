@@ -92,3 +92,4 @@ highlight link GitGutterChangeDeleteLine myGitColor
 " map key(s) to command
 nnoremap ,o :lopen<CR>
 nnoremap ,c :lclose<CR>
+nnoremap ,x :call system('xclip', @0) <CR>
