@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Enforce script is ran as root
+[[ "$EUID" -ne 0 ]] && echo "This script requires root." && exit
+# Get usb id and set bus, port, and subport
+USB_ID=$(dmesg | grep -B1 Yubico | tail -n 2 | head -n 1 | sed -E 's/^\[[^]]+\] usb ([^:]*):.*/\1/')
+read -r BUS PORT SUBPORT <<<$(echo $USB_ID | sed -E 's/^([0-9]+)-([0-9]+)\.?([0-9]+)?$/\1 \2 \3/g')
+# Set patterns to parse driver from lsusb -t
+BUS_PATTERN="$(printf '.*Bus %02d.*\\n' $BUS)"
+PORT_PATTERN="$(printf '.*Port %d.*\\n' $PORT)"
+[[ ! -z $SUBPORT ]] && SUBPORT_PATTERN=$(printf '.*Port %d:.*\n' $SUBPORT) || SUBPORT_PATTERN=''
+PATTERN="${BUS_PATTERN}${PORT_PATTERN}${SUBPORT_PATTERN}"
+DRIVER=$(lsusb -t | pcregrep -M  "${PATTERN}" | tail -n1 | sed -E 's/.*?Driver=([^,]*).*/\1/')
+# Set driver path for unbind and bind
+DRIVER_PATH="/sys/bus/usb/drivers/${DRIVER}"
+UNBIND_PATH="${DRIVER_PATH}/unbind"
+BIND_PATH="${DRIVER_PATH}/bind"
+USB_ID=$(ls ${DRIVER_PATH} | grep "${USB_ID}")
+# Bind or unbind yubico device to make available for virtual machine or host
+[[ -z "$1" || "$1" == "-b" || "$1" == "--bind" ]] && echo "${USER_ID}" > ${BIND_PATH}
+[[ "$1" == "-u" || "$1" == "--unbind" ]] && echo "${USER_ID}" > ${UNBIND_PATH}
+# vim:se ts=2 sw=2 et:
