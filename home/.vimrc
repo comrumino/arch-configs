@@ -73,6 +73,9 @@ let g:neomake_highlight_columns = 0 "help neomake-highlight
 let g:neomake_highlight_lines = 0
 let g:neomake_open_list = 0
 
+" :help colorscheme
+colorscheme PerfectDark
+
 " :help gitgutter
 let g:gitgutter_sign_added = 'a'
 let g:gitgutter_sign_modified = 'm'
@@ -81,13 +84,10 @@ let g:gitgutter_sign_removed_first_line = 'r'
 let g:gitgutter_sign_modified_removed = 'mr'
 let g:gitgutter_signs = 1
 let g:gitgutter_highlight_lines = 1
-highlight myGitColor ctermbg=232
-highlight myGitBlack ctermbg=0
-highlight link GitGutterAddLine myGitColor
-highlight link GitGutterChangeLine myGitColor
-highlight link GitGutterDeleteLine myGitBlack
-highlight link GitGutterChangeDeleteLine myGitColor
-
+highlight link GitGutterAddLine DiffAdd
+highlight link GitGutterChangeLine DiffAdd
+highlight link GitGutterDeleteLine DiffAdd
+highlight link GitGutterChangeDeleteLine background
 
 " map key(s) to command
 nnoremap ,o :lopen<CR>
