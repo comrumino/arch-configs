@@ -16,6 +16,6 @@ UNBIND_PATH="${DRIVER_PATH}/unbind"
 BIND_PATH="${DRIVER_PATH}/bind"
 USB_ID=$(ls ${DRIVER_PATH} | grep "${USB_ID}")
 # Bind or unbind yubico device to make available for virtual machine or host
-[[ -z "$1" || "$1" == "-b" || "$1" == "--bind" ]] && echo "${USER_ID}" > ${BIND_PATH}
-[[ "$1" == "-u" || "$1" == "--unbind" ]] && echo "${USER_ID}" > ${UNBIND_PATH}
+[[ -z "$1" || "$1" == "-b" || "$1" == "--bind" ]] && echo "${USB_ID}" > ${BIND_PATH}
+[[ "$1" == "-u" || "$1" == "--unbind" ]] && echo "${USB_ID}" > ${UNBIND_PATH}
 # vim:se ts=2 sw=2 et:
