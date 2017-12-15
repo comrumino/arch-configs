@@ -28,8 +28,6 @@ set_hhkb() {
   cat > "${XMODMAP}" << EOF
 keycode 102 = Super_L
 keycode 100 = Super_R
-keycode 119 = BackSpace
-keycode 22  = Delete
 EOF
 }
 set_chrm() { 
@@ -95,5 +93,5 @@ autocutsel -selection PRIMARY -fork &
 xmodmap "${XMODMAP}"
 pulseaudio --start
 xscreensaver -nosplash &
-exec awesome
+exec awesome -a
 # vim: syntax=bash
