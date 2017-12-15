@@ -80,8 +80,8 @@ mykeymap() {
     259872dbb21a931bc1412d641114e1ae) # CHRM
       [[ "${DEVICE_KEY}" == "chrm" ]] && pass || set_xmodmap "${DEVICE_KEY}"
       ;;
-    d41d8cd98f00b204e9800998ecf8427e) # NONE
-      [[ "${DEVICE_KEY}" == "empty" ]] && pass || set_xmodmap "${DEVICE_KEY}"
+    *) # Neither HHKB or CHRM so set xmodmap using device key
+      set_xmodmap "${DEVICE_KEY}"
       ;; 
   esac
 }
