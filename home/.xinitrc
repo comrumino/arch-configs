@@ -74,7 +74,7 @@ mykeymap() {
   DEVICE_KEY=$(get_device_key)
   [[ -z ${DEVICE_KEY} ]] && DEVICE_KEY="none"
   case "${HASH}" in
-    5e25b643ad2513ea149dd872a40e114a) # HHKB
+    5438c9e2fbf1a6ea8cd6772c2f2d04e4) # HHKB
       [[ "${DEVICE_KEY}" == "hhkb" ]] && pass || set_xmodmap "${DEVICE_KEY}"
       ;;
     259872dbb21a931bc1412d641114e1ae) # CHRM
