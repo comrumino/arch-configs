@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+FLAG="$1"
+MODE="$2"
+OPTIONS=("1600x900_60.00" "1600x1800_60.00" "3840x2160_60.00")
+OUTPUT="Virtual1"
+
+HELPMENU="-m <option id>\n"
+HELPMENU+="      mode 0: ${OPTIONS[0]}\n"
+HELPMENU+="      mode 1: ${OPTIONS[1]}\n"
+HELPMENU+="      mode 2: ${OPTIONS[2]}\n"
+showhelp () {
+    echo -e "${HELPMENU}"
+}
+if [[ "$FLAG" == "-h" ]]; then
+    showhelp 
+elif [[ "$FLAG" == "-m" ]]; then
+    xrandr --output "$OUTPUT" --mode "${OPTIONS[MODE]}" || showhelp
+else
+    showhelp
+fi
+
+# vim:se ts=4 sw=4 et:
