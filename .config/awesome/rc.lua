@@ -10,7 +10,7 @@ local beautiful = require("beautiful")
 local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
--- strayArch
+-- comrumino
 local home = os.getenv("HOME")
 local widgets = require "widgets"
 local multi_tap = require "multi_tap"
@@ -43,7 +43,7 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init(home .. "/.config/awesome/themes/strayArch/theme.lua")
+beautiful.init(home .. "/.config/awesome/themes/comrumino/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "uxterm"
@@ -107,7 +107,7 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 -- {{{ Wibar
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
--- strayArch
+-- comrumino
 mybattery = wibox.widget.textbox()
 
 
@@ -554,7 +554,7 @@ client.connect_signal("focus", function(c) c.border_color = beautiful.border_foc
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 
--- strayArch below
+-- comrumino
 --[[
 client.connect_signal("focus", function(c)
                                 c.opacity = 1
@@ -590,6 +590,4 @@ mybattery_timer = timer({timeout = 3})
   mybattery_timer:start()
   mybattery:set_text(widgets.battery_text())
 end
-
--- strayArch above
--- vim:se ts=2 sw=2 et:
+-- vim:se ts=2 sw=2 sts=2 et:

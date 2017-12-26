@@ -1,9 +1,9 @@
 -----------------------------
--- strayArch awesome theme --
+-- comrumino awesome theme --
 -----------------------------
 
 theme = {}
-theme.path = os.getenv("HOME") .. "/.config/awesome/themes/strayArch"
+theme.path = os.getenv("HOME") .. "/.config/awesome/themes/comrumino"
 
 theme.font          = "sans 8"
 
