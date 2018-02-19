@@ -9,8 +9,15 @@ set softtabstop=4 " set backspace to delete four spaces
 set tabstop=4 " set tab width to four
 set showtabline=2 " set display tabline to always
 
+" Dependencies
+"  markdown-preview:
+"   https://aur.archlinux.org/packages/python-path-and-address-git/
+"   https://aur.archlinux.org/packages/python-grip-git/
+"  powerline:
+"   community/powerline-fonts
+
 " plug, set the runtime path to include
-call plug#begin('~/.vim/plugged') " note: pkgbuild for powerline fonts
+call plug#begin('~/.vim/plugged')
 Plug 'tpope/vim-fugitive'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -19,6 +26,9 @@ Plug 'Yggdroot/indentLine'
 Plug 'neomake/neomake'
 Plug 'romainl/vim-qf'
 Plug 'airblade/vim-gitgutter'
+Plug 'godlygeek/tabular'
+Plug 'JamshedVesuna/vim-markdown-preview'
+Plug 'jgm/pandoc'
 call plug#end() 
 
 " airline
@@ -89,7 +99,13 @@ highlight link GitGutterChangeLine DiffAdd
 highlight link GitGutterDeleteLine DiffAdd
 highlight link GitGutterChangeDeleteLine background
 
+" markdown-preview
+let vim_markdown_preview_github=1
+let vim_markdown_preview_use_xdg_open=1
+
 " map key(s) to command
-nnoremap ,o :lopen<CR>
-nnoremap ,c :lclose<CR>
-nnoremap ,x :call system('xclip', @0) <CR>
+let mapleader=","
+nnoremap <leader>o :lopen<CR>
+nnoremap <leader>c :lclose<CR>
+nnoremap <leader>m :call Vim_Markdown_Preview()<CR>
+nnoremap <leader>x :call system('xclip', @0)<CR>
