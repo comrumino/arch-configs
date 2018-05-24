@@ -12,6 +12,7 @@ alias halt="sudo systemctl halt"
 alias build='arch-nspawn ${CHROOT}/root pacman -Syu; makechrootpkg -c -r ${CHROOT} -- -i'
 alias build32='arch-nspawn ${CHROOT32}/root pacman -Syu; makechrootpkg -c -r ${CHROOT32} -- -i'
 alias ls='ls --color=auto'
+alias tidy-xml='tidy -xml -i -m'
 alias run='arch-nspawn ${CHROOT}/${USER}'
 alias run32='arch-nspawn ${CHROOT32}/${USER}'
 alias runr='arch-nspawn ${CHROOT}/root'
