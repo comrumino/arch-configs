@@ -18,8 +18,10 @@ alias run32='arch-nspawn ${CHROOT32}/${USER}'
 alias runr='arch-nspawn ${CHROOT}/root'
 alias runr32='arch-nspawn ${CHROOT32}/root'
 
-PS1='[\u@\h \W]\$ '
-[[ -n "${XTERM_VERSION}" ]] && [[ ! -z $(command -v transset-df) ]] && transset-df --id "${WINDOWID}" > /dev/null
+BOLD="\[$(tput bold)\]"
+CYAN="\[$(tput setaf 6)\]"
+RESET="\[$(tput sgr0)\]"
+PS1="${RESET}${BOLD}[${CYAN}\u@\h \W${RESET}${BOLD}]${RESET}\$ "
 [[ -d "/home/$(whoami)/bin" ]] && PATH=${PATH}:~/bin
 
 # Configure git bash completion and editor selection
