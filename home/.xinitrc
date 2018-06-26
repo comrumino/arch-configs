@@ -88,10 +88,13 @@ mykeymap() {
 # map keys when necessary conditions are satisfied
 mykeymap
 #
-autocutsel -fork &
-autocutsel -selection PRIMARY -fork &
-xmodmap "${XMODMAP}"
-pulseaudio --start
-xscreensaver -nosplash &
+[[ -n "$(command -v autocutsel)" ]] && {
+    autocutsel -fork &
+    autocutsel -selection PRIMARY -fork &
+}
+[[ -n "$(command -v xmodmap)" ]] && xmodmap "${XMODMAP}"
+[[ -n "$(command -v pulseaudio)" ]] && pulseaudio --start
+[[ -n "$(command -v xscreensaver)" ]] && xscreensaver -nosplash &
+[[ -n "$(command -v compton)" ]] && (sleep 1 && compton) &  # subshell compton in a sec so no flicker
 exec awesome -a
 # vim: syntax=bash
