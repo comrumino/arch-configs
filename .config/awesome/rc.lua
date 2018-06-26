@@ -555,10 +555,12 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- }}}
 
 -- comrumino
---[[
+function string.endswith(base, substring)
+   return substring=='' or string.sub(base, -string.len(substring))==substring
+end
 client.connect_signal("focus", function(c)
                                 c.opacity = 1
-                                if c.instance == terminal then
+                                if string.endswith(c.instance, "xterm") then
                                     c.border_color = beautiful.border_tfocus
                                 else
                                     c.border_color = beautiful.border_focus
@@ -567,15 +569,14 @@ client.connect_signal("focus", function(c)
                               c.opacity = 1
                            end)
 client.connect_signal("unfocus", function(c)
-                                if c.instance == terminal then
+                                if string.endswith(c.instance, "xterm") then
                                     c.border_color = beautiful.border_tnormal
-                                    c.opacity = 0.50
+                                    c.opacity = 0.6
                                 else
                                     c.border_color = beautiful.border_normal
                                     c.opacity = 1
                                 end
                              end)
---]]
 
 -- battery
 if widgets.is_mobile() then
