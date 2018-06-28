@@ -29,6 +29,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'godlygeek/tabular'
 Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'jgm/pandoc'
+Plug 'powerman/vim-plugin-AnsiEsc'
 call plug#end() 
 
 " airline
@@ -109,3 +110,4 @@ nnoremap <leader>o :lopen<CR>
 nnoremap <leader>c :lclose<CR>
 nnoremap <leader>m :call Vim_Markdown_Preview()<CR>
 nnoremap <leader>x :call system('xclip', @0)<CR>
+nnoremap <leader>a :AnsiEsc<CR>
