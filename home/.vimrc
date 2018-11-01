@@ -138,4 +138,3 @@ nnoremap <leader>x :call system('xclip', @0)<CR>
 nnoremap <leader>s :call LexicalToggle()<CR>
 nnoremap <leader>a :AnsiEsc<CR>
 nnoremap <leader>p oimport pdb; pdb.set_trace()<Esc>
-nnoremap <leader>P oif device.name != 'vpc-0326a49042b52bd59': import pdb; pdb.set_trace()<Esc>
