@@ -8,6 +8,11 @@ set shiftwidth=4 " set indent width to four
 set softtabstop=4 " set backspace to delete four spaces
 set tabstop=4 " set tab width to four
 set showtabline=2 " set display tabline to always
+" configure fold settings
+" set foldmethod=indent
+" set foldlevelstart=10
+" set foldcolumn=2
+" set mouse=a
 
 " Dependencies
 "  markdown-preview:
@@ -15,6 +20,9 @@ set showtabline=2 " set display tabline to always
 "   https://aur.archlinux.org/packages/python-grip-git/
 "  powerline:
 "   community/powerline-fonts
+"  wordy and lexical:
+"   extra/aspell-en
+"   extra/aspell-en
 
 " plug, set the runtime path to include
 call plug#begin('~/.vim/plugged')
@@ -30,6 +38,8 @@ Plug 'godlygeek/tabular'
 Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'jgm/pandoc'
 Plug 'powerman/vim-plugin-AnsiEsc'
+Plug 'reedes/vim-wordy'
+Plug 'reedes/vim-lexical'
 call plug#end() 
 
 " airline
@@ -69,8 +79,8 @@ let g:neomake_c_enabled_makers = ['gcc']
 let g:neomake_cpp_enabled_makers = ['g++']
 let g:neomake_css_enabled_makers = ['csslint'] " npm install csslint
 let g:neomake_html_enabled_makers = ['html-angular-validate'] " npm install html-angular-validate
-let g:neomake_java_enabled_makers = ['javac']
-let g:neomake_javascript_enabled_makers = ['eslint']
+let g:neomake_java_enabled_makers = ['ant']
+let g:neomake_javascript_enabled_makers = ['jshint']
 let g:neomake_lua_enabled_makers = ['luac']
 let g:neomake_python_flake8_maker = {'args': ['--format=default'],
     \'errorformat': '%E%f:%l: could not compile,%-Z%p^,%A%f:%l:%c: %t%n %m,%A%f:%l: %t%n %m,%-G%.%#',}
@@ -104,10 +114,28 @@ highlight link GitGutterChangeDeleteLine background
 let vim_markdown_preview_github=1
 let vim_markdown_preview_use_xdg_open=1
 
+" wordy and lexical
+let g:lexical#spell = 0
+let g:lexical#spelllang = ['en_us','en_ca',]
+let g:lexical#dictionary = ['/usr/lib/aspell/',]
+
+function! LexicalToggle(...) abort
+    let g:lexical#spell = g:lexical#spell ? 0 : 1
+    if g:lexical#spell
+        :call call (function('lexical#init'), [{ 'spell': 1 }])
+    else
+        :call call (function('lexical#init'), [{ 'spell': 0 }])
+    endif
+endfunction
+
+
 " map key(s) to command
 let mapleader=","
 nnoremap <leader>o :lopen<CR>
 nnoremap <leader>c :lclose<CR>
 nnoremap <leader>m :call Vim_Markdown_Preview()<CR>
 nnoremap <leader>x :call system('xclip', @0)<CR>
+nnoremap <leader>s :call LexicalToggle()<CR>
 nnoremap <leader>a :AnsiEsc<CR>
+nnoremap <leader>p oimport pdb; pdb.set_trace()<Esc>
+nnoremap <leader>P oif device.name != 'vpc-0326a49042b52bd59': import pdb; pdb.set_trace()<Esc>
