@@ -13,6 +13,7 @@ alias build='arch-nspawn ${CHROOT}/root pacman -Syu; makechrootpkg -c -r ${CHROO
 alias build32='arch-nspawn ${CHROOT32}/root pacman -Syu; makechrootpkg -c -r ${CHROOT32} -- -i'
 alias dirtybuild='arch-nspawn ${CHROOT}/root pacman -Syu; makechrootpkg -r ${CHROOT} -- -i'
 alias ls='ls --color=auto'
+alias newchroot='mkarchroot -C /etc/pacman.conf -M /etc/makepkg.conf $CHROOT/root base-devel archstrike-mirrorlist'
 alias tidy-xml='tidy -xml -i -m'
 alias run='arch-nspawn ${CHROOT}/${USER}'
 alias run32='arch-nspawn ${CHROOT32}/${USER}'
