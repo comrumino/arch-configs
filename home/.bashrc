@@ -11,12 +11,15 @@ alias halt="sudo systemctl halt"
 
 alias build='arch-nspawn ${CHROOT}/root pacman -Syu; makechrootpkg -c -r ${CHROOT} -- -i'
 alias build32='arch-nspawn ${CHROOT32}/root pacman -Syu; makechrootpkg -c -r ${CHROOT32} -- -i'
+alias dirtybuild='arch-nspawn ${CHROOT}/root pacman -Syu; makechrootpkg -r ${CHROOT} -- -i'
 alias ls='ls --color=auto'
 alias tidy-xml='tidy -xml -i -m'
 alias run='arch-nspawn ${CHROOT}/${USER}'
 alias run32='arch-nspawn ${CHROOT32}/${USER}'
 alias runr='arch-nspawn ${CHROOT}/root'
 alias runr32='arch-nspawn ${CHROOT32}/root'
+alias clang-fsan='clang -O1 -g -fsanitize=address -fno-omit-frame-pointer -c'
+
 
 BOLD="\[$(tput bold)\]"
 CYAN="\[$(tput setaf 6)\]"
@@ -30,3 +33,12 @@ GIT_BC="/usr/share/git/completion/git-completion.bash"
 [[ -f "/usr/bin/vim" ]] && export VISUAL="vim" && export EDITOR="${VISUAL}"
 
 [[ -f "/usr/bin/vmware" ]] && export VMWARE_USE_SHIPPED_LIBS='yes'
+
+
+# in case not starting xorg, export env anyway
+export ABS="${HOME}/abs"
+export CHROOT="${HOME}/chroot"
+export CHROOT32="${HOME}/chroot32"
+export REPO="${HOME}/repo"
+export XMODMAP="${HOME}/.xmodmap"
+export XRESRC="${HOME}/.xresources"
