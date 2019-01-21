@@ -75,8 +75,12 @@ let g:Powerline_symbols = 'fancy'
 
 " :help neomake
 call neomake#configure#automake('rw', 750)
-let g:neomake_c_enabled_makers = ['gcc']
-let g:neomake_cpp_enabled_makers = ['g++']
+let g:neomake_c_enabled_makers = ['clang']
+let g:neomake_cpp_enabled_makers = ['clang']
+let g:neomake_cpp_clang_maker = {
+   \ 'exe': 'clang++',
+   \ 'args': ['-Wall', '-Wextra', '-Weverything', '-pedantic', '-Wno-sign-conversion'],
+   \ }
 let g:neomake_css_enabled_makers = ['csslint'] " npm install csslint
 let g:neomake_html_enabled_makers = ['html-angular-validate'] " npm install html-angular-validate
 let g:neomake_java_enabled_makers = ['ant']
