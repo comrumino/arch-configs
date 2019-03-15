@@ -16,8 +16,8 @@ set showtabline=2 " set display tabline to always
 
 " Dependencies
 "  markdown-preview:
-"   https://aur.archlinux.org/packages/python-path-and-address-git/
-"   https://aur.archlinux.org/packages/python-grip-git/
+"   https://aur.archlinux.org/python-path-and-address-git.git
+"   https://aur.archlinux.org/python-grip-git.git
 "  powerline:
 "   community/powerline-fonts
 "  wordy and lexical:
