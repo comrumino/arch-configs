@@ -132,6 +132,20 @@ function! LexicalToggle(...) abort
     endif
 endfunction
 
+function! UnitTest(...) abort
+    let abspath = expand('%:p')
+    let relpath = expand('%:p:h')  " dir of file beinging edited
+    let class = "cprogrm711"
+    if abspath =~ ".*" . class . ".*"
+        " c++ preferences
+        let cmakedir = substitute(abspath, '\(/.*cprogrm711/\)\(.*\)', '\1', '')
+        let cmakelists = cmakedir . "CMakeLists.txt"
+        let cmake_o = system('cd ' . cmakedir . ' && RELPATH=' . relpath . ' /usr/bin/cmake ' . cmakelists . ' && ./CPROGRM')
+        tabnew
+        setlocal buftype=nofile bufhidden=wipe noswapfile nobuflisted nomodified
+        silent put=cmake_o
+    endif
+endfunction
 
 " map key(s) to command
 let mapleader=","
@@ -142,3 +156,4 @@ nnoremap <leader>x :call system('xclip', @0)<CR>
 nnoremap <leader>s :call LexicalToggle()<CR>
 nnoremap <leader>a :AnsiEsc<CR>
 nnoremap <leader>p oimport pdb; pdb.set_trace()<Esc>
+nnoremap <leader>t :call UnitTest()<Esc>
