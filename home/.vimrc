@@ -16,8 +16,8 @@ set showtabline=2 " set display tabline to always
 
 " Dependencies
 "  markdown-preview:
-"   https://aur.archlinux.org/python-path-and-address-git.git
-"   https://aur.archlinux.org/python-grip-git.git
+"   git clone https://aur.archlinux.org/python-path-and-address-git.git
+"   git clone https://aur.archlinux.org/python-grip-git.git
 "  powerline:
 "   community/powerline-fonts
 "  wordy and lexical:
@@ -133,14 +133,14 @@ function! LexicalToggle(...) abort
 endfunction
 
 function! UnitTest(...) abort
-    let abspath = expand('%:p')
-    let relpath = expand('%:p:h')  " dir of file beinging edited
-    let class = "cprogrm711"
+    let l:abspath = expand('%:p')
+    let l:relpath = expand('%:p:h')  " dir of file beinging edited
+    let l:class = "cprogrm711"
     if abspath =~ ".*" . class . ".*"
         " c++ preferences
-        let cmakedir = substitute(abspath, '\(/.*cprogrm711/\)\(.*\)', '\1', '')
-        let cmakelists = cmakedir . "CMakeLists.txt"
-        let cmake_o = system('cd ' . cmakedir . ' && RELPATH=' . relpath . ' /usr/bin/cmake ' . cmakelists . ' && ./CPROGRM')
+        let l:cmakedir = substitute(abspath, '\(/.*cprogrm711/\)\(.*\)', '\1', '')
+        let l:cmakelists = cmakedir . "CMakeLists.txt"
+        let l:cmake_o = system('cd ' . cmakedir . ' && RELPATH=' . relpath . ' /usr/bin/cmake ' . cmakelists . ' && make && ./CPROGRM')
         tabnew
         setlocal buftype=nofile bufhidden=wipe noswapfile nobuflisted nomodified
         silent put=cmake_o
