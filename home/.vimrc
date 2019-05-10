@@ -132,6 +132,17 @@ function! LexicalToggle(...) abort
     endif
 endfunction
 
+" open/close spit window for terminal
+let g:termstate = 0
+function! TermToggle(...) abort
+    if !g:termstate
+        let g:termstate = term_start($SHELL, {"term_kill": "kill"})
+    else
+        :exe "bd!" . g:termstate
+        let g:termstate = 0
+    endif
+endfunction
+
 function! UnitTest(...) abort
     let l:abspath = expand('%:p')
     let l:relpath = expand('%:p:h')  " dir of file beinging edited
@@ -157,3 +168,5 @@ nnoremap <leader>s :call LexicalToggle()<CR>
 nnoremap <leader>a :AnsiEsc<CR>
 nnoremap <leader>p oimport pdb; pdb.set_trace()<Esc>
 nnoremap <leader>t :call UnitTest()<Esc>
+nnoremap <leader>u :call TermToggle()<Esc>
+tnoremap <ESC> <C-w>:call TermToggle()<Esc>
