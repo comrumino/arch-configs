@@ -9,10 +9,10 @@ set softtabstop=4 " set backspace to delete four spaces
 set tabstop=4 " set tab width to four
 set showtabline=2 " set display tabline to always
 " configure fold settings
-" set foldmethod=indent
-" set foldlevelstart=10
-" set foldcolumn=2
-" set mouse=a
+"set foldmethod=indent
+"set foldlevelstart=10
+"set foldcolumn=2
+"set mouse=a
 
 " Dependencies
 "  markdown-preview:
@@ -135,10 +135,10 @@ endfunction
 function! UnitTest(...) abort
     let l:abspath = expand('%:p')
     let l:relpath = expand('%:p:h')  " dir of file beinging edited
-    let l:class = "cprogrm711"
+    let l:class = "cprogrm712"
     if abspath =~ ".*" . class . ".*"
         " c++ preferences
-        let l:cmakedir = substitute(abspath, '\(/.*cprogrm711/\)\(.*\)', '\1', '')
+        let l:cmakedir = substitute(abspath, '\(/.*' . class . '/\)\(.*\)', '\1', '')
         let l:cmakelists = cmakedir . "CMakeLists.txt"
         let l:cmake_o = system('cd ' . cmakedir . ' && RELPATH=' . relpath . ' /usr/bin/cmake ' . cmakelists . ' && make && ./CPROGRM')
         tabnew
