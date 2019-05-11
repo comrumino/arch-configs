@@ -133,35 +133,65 @@ function! LexicalToggle(...) abort
 endfunction
 
 " open/close spit window for terminal
-let g:termstate = 0
+let s:termbufnr = 0
 function! TermToggle(...) abort
-    if !g:termstate
-        let g:termstate = term_start($SHELL, {"term_kill": "kill"})
+    if s:termbufnr && !bufexists(s:termbufnr)
+        let s:termbufnr = 0
+    endif
+    if !s:termbufnr
+        let s:termbufnr = term_start($SHELL, {"term_kill": "kill"})
     else
-        :exe "bd!" . g:termstate
-        let g:termstate = 0
+        :exe "bd!" . s:termbufnr
+        let s:termbufnr = 0
     endif
 endfunction
 
+let s:unitbufnr = 0
 function! UnitTest(...) abort
-    let l:abspath = expand('%:p')
-    let l:relpath = expand('%:p:h')  " dir of file beinging edited
-    let l:class = "cprogrm712"
-    if abspath =~ ".*" . class . ".*"
-        " c++ preferences
-        let l:cmakedir = substitute(abspath, '\(/.*' . class . '/\)\(.*\)', '\1', '')
-        let l:cmakelists = cmakedir . "CMakeLists.txt"
-        let l:cmake_o = system('cd ' . cmakedir . ' && RELPATH=' . relpath . ' /usr/bin/cmake ' . cmakelists . ' && make && ./CPROGRM')
-        tabnew
-        setlocal buftype=nofile bufhidden=wipe noswapfile nobuflisted nomodified
-        silent put=cmake_o
+    if s:unitbufnr && !bufexists(s:unitbufnr)
+        let s:unitbufnr = 0
+    endif
+    if !s:unitbufnr
+        let l:abspath = expand('%:p')
+        let l:relpath = expand('%:p:h')  " dir of file beinging edited
+        let l:class = "cprogrm712"
+        if abspath =~ ".*" . class . ".*"
+            " c++ preferences
+            let l:cmakedir = substitute(abspath, '\(/.*' . class . '/\)\(.*\)', '\1', '')
+            let l:cmakelists = cmakedir . "CMakeLists.txt"
+            let l:cmake_o = system('cd ' . cmakedir . ' && RELPATH=' . relpath . ' /usr/bin/cmake ' . cmakelists . ' && make && ./CPROGRM')
+            new
+            setlocal buftype=nofile bufhidden=wipe noswapfile nobuflisted nomodified
+            let s:unitbufnr = bufnr("%")
+            silent put=cmake_o
+            :exe "map <buffer> <ESC> :call UnitTest()<Esc>"
+        endif
+    else
+        exec "unmap <buffer> <ESC>"
+        let s:unitbufnr = 0
+        :q
+    endif
+endfunction
+
+let s:quickbufnr = 0
+function! QuickfixToggle(...) abort
+    if s:quickbufnr && !bufexists(s:quickbufnr)
+        let s:quickbufnr = 0
+    endif
+    if !s:quickbufnr && len(getloclist(0))
+        :lopen
+        let s:quickbufnr = bufnr("%")
+        exec "map <buffer> <ESC> :call QuickfixToggle()<Esc>"
+    elseif s:quickbufnr
+        exec "unmap <buffer> <ESC>"
+        let s:quickbufnr = 0
+        :lclose
     endif
 endfunction
 
 " map key(s) to command
 let mapleader=","
-nnoremap <leader>o :lopen<CR>
-nnoremap <leader>c :lclose<CR>
+nnoremap <leader>o :call QuickfixToggle()<CR>
 nnoremap <leader>m :call Vim_Markdown_Preview()<CR>
 nnoremap <leader>x :call system('xclip', @0)<CR>
 nnoremap <leader>s :call LexicalToggle()<CR>
