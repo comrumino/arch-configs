@@ -9,12 +9,14 @@ set softtabstop=4 " set backspace to delete four spaces
 set tabstop=4 " set tab width to four
 set showtabline=2 " set display tabline to always
 " configure fold settings
-"set foldmethod=indent
-"set foldlevelstart=10
-"set foldcolumn=2
-"set mouse=a
+" set foldmethod=indent
+" set foldlevelstart=10
+" set foldcolumn=2
+" set mouse=a
 
 " Dependencies
+"  instant-rst
+"   git clone https://aur.archlinux.org/instant-rst.git
 "  markdown-preview:
 "   git clone https://aur.archlinux.org/python-path-and-address-git.git
 "   git clone https://aur.archlinux.org/python-grip-git.git
@@ -40,6 +42,8 @@ Plug 'jgm/pandoc'
 Plug 'powerman/vim-plugin-AnsiEsc'
 Plug 'reedes/vim-wordy'
 Plug 'reedes/vim-lexical'
+Plug 'gu-fan/InstantRst'
+Plug 'gu-fan/riv.vim'
 call plug#end() 
 
 " airline
@@ -120,7 +124,7 @@ let vim_markdown_preview_use_xdg_open=1
 
 " wordy and lexical
 let g:lexical#spell = 0
-let g:lexical#spelllang = ['en_us','en_ca',]
+let g:lexical#spelllang = ['en_us']
 let g:lexical#dictionary = ['/usr/lib/aspell/',]
 
 function! LexicalToggle(...) abort
@@ -154,7 +158,7 @@ function! UnitTest(...) abort
     if !s:unitbufnr
         let l:abspath = expand('%:p')
         let l:relpath = expand('%:p:h')  " dir of file beinging edited
-        let l:class = "cprogrm712"
+        let l:class = "cpp-coursework"
         if abspath =~ ".*" . class . ".*"
             " c++ preferences
             let l:cmakedir = substitute(abspath, '\(/.*' . class . '/\)\(.*\)', '\1', '')
@@ -167,9 +171,9 @@ function! UnitTest(...) abort
             :exe "map <buffer> <ESC> :call UnitTest()<Esc>"
         endif
     else
-        exec "unmap <buffer> <ESC>"
+        exec "nnoremap " . s:unitbufnr . "<ESC> <ESC>"
+        :exe "bd " . s:unitbufnr . ""
         let s:unitbufnr = 0
-        :q
     endif
 endfunction
 
@@ -183,9 +187,9 @@ function! QuickfixToggle(...) abort
         let s:quickbufnr = bufnr("%")
         exec "map <buffer> <ESC> :call QuickfixToggle()<Esc>"
     elseif s:quickbufnr
-        exec "unmap <buffer> <ESC>"
+        exec "nnoremap " . s:quickbufnr . "<ESC> <ESC>"
+        :exe "bd " . s:quickbufnr . ""
         let s:quickbufnr = 0
-        :lclose
     endif
 endfunction
 
