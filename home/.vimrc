@@ -37,8 +37,7 @@ Plug 'neomake/neomake'
 Plug 'romainl/vim-qf'
 Plug 'airblade/vim-gitgutter'
 Plug 'godlygeek/tabular'
-Plug 'JamshedVesuna/vim-markdown-preview'
-Plug 'jgm/pandoc'
+Plug 'comrumino/vim-markdown-preview'
 Plug 'powerman/vim-plugin-AnsiEsc'
 Plug 'reedes/vim-wordy'
 Plug 'reedes/vim-lexical'
@@ -87,12 +86,12 @@ let g:neomake_cpp_clang_maker = {
    \ }
 let g:neomake_css_enabled_makers = ['csslint'] " npm install csslint
 let g:neomake_html_enabled_makers = ['html-angular-validate'] " npm install html-angular-validate
-let g:neomake_java_enabled_makers = ['ant']
+let g:neomake_java_javac_args = ['-cp', '.']
 let g:neomake_javascript_enabled_makers = ['jshint']
 let g:neomake_lua_enabled_makers = ['luac']
 let g:neomake_python_flake8_maker = {'args': ['--format=default'],
     \'errorformat': '%E%f:%l: could not compile,%-Z%p^,%A%f:%l:%c: %t%n %m,%A%f:%l: %t%n %m,%-G%.%#',}
-let g:neomake_python_flake8_exe = '/usr/bin/flake8-python2'
+let g:neomake_python_flake8_exe = '/usr/bin/flake8'
 let g:neomake_python_enabled_makers = ['flake8'] " pacman -S flake8
 let g:neomake_scss_enabled_makers = ['scss_lint']
 let g:neomake_sh_enabled_makers = ['shellcheck'] " pacman -S shellcheck
@@ -119,8 +118,10 @@ highlight link GitGutterDeleteLine DiffAdd
 highlight link GitGutterChangeDeleteLine background
 
 " markdown-preview
-let vim_markdown_preview_github=1
-let vim_markdown_preview_use_xdg_open=1
+let vim_markdown_preview_github = 1
+let vim_markdown_preview_use_xdg_open = 1
+let vim_markdown_preview_browser = 'chromium'
+
 
 " wordy and lexical
 let g:lexical#spell = 0
