@@ -595,7 +595,7 @@ function autospawn()
   }
   for app = 1, #spawn_apps do
     -- if the app is not found, no error is reported...
-    awful.spawn.single_instance(spawn_apps[app], {}, function(c) return true end)
+    awful.spawn.single_instance(spawn_apps[app], {}, function(c) return c.instance == spawn_apps[app]:match("%S") end)
   end
 end
 
