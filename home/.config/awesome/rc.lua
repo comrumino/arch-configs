@@ -554,33 +554,26 @@ client.connect_signal("focus", function(c) c.border_color = beautiful.border_foc
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 
--- comrumino
+------------------------------------------------------------------------------------------------------------------------
+-- Customizations to default AwesomeWM by comrumino
+-- Extended functionality is executed by customize_awesomewm, the entrypoint for customization
+------------------------------------------------------------------------------------------------------------------------
 function string.endswith(base, substring)
-   return substring=='' or string.sub(base, -string.len(substring))==substring
+  -- checks if base ends with substring and returns true iff base is a string and match occurs
+  if type(base) ~= 'string' then
+    -- type sanity check fails so return false
+    return false
+  elseif substring == nil then
+    -- base is a string so we return true here to prevent unexpected error condition using sub
+    return true
+  else
+    return string.sub(base, -string.len(substring)) == substring
+  end
 end
-client.connect_signal("focus", function(c)
-                                c.opacity = 1
-                                if string.endswith(c.instance, "xterm") then
-                                    c.border_color = beautiful.border_tfocus
-                                else
-                                    c.border_color = beautiful.border_focus
-                                end
 
-                              c.opacity = 1
-                           end)
-client.connect_signal("unfocus", function(c)
-                                if string.endswith(c.instance, "xterm") then
-                                    c.border_color = beautiful.border_tnormal
-                                    c.opacity = 0.6
-                                else
-                                    c.border_color = beautiful.border_normal
-                                    c.opacity = 1
-                                end
-                             end)
-
--- battery
-if widgets.is_mobile() then
-mybattery_timer = timer({timeout = 3})
+function init_battery_widget()
+  -- create widget to show battery life
+  mybattery_timer = timer({timeout = 3})
   local right_layout = wibox.layout.fixed.horizontal()
   right_layout:add(mybattery)
 
@@ -591,4 +584,67 @@ mybattery_timer = timer({timeout = 3})
   mybattery_timer:start()
   mybattery:set_text(widgets.battery_text())
 end
+
+function autospawn()
+  -- Automatically run programs when awesomewm starts
+  local spawn_apps = { 
+    "chromium",
+    "vmware",
+    "hexchat",
+    "ckb-next -c -b",
+  }
+  for app = 1, #spawn_apps do
+    -- if the app is not found, no error is reported...
+    awful.spawn.single_instance(spawn_apps[app], {}, function(c) return true end)
+  end
+end
+
+function focus_signal_callback(c)
+  -- *xterm focus border color
+  c.opacity = 1
+  if string.endswith(c.instance, "xterm") then
+    c.border_color = beautiful.border_tfocus
+  else
+    c.border_color = beautiful.border_focus
+  end
+  c.opacity = 1
+end
+
+function unfocus_signal_callback(c)
+  -- *xterm unfocus border color
+  if string.endswith(c.instance, "xterm") then
+    c.border_color = beautiful.border_tnormal
+    c.opacity = 0.6
+  else
+    c.border_color = beautiful.border_normal
+    c.opacity = 1
+  end
+end
+
+function manage_signal_callback(c)
+  -- Some applications do not respect ICCCM rules and awful.rules.rules are ignored
+  -- Other applications simply start with undesired properties like maximized/floating
+  -- To find properties to use in a rule, try xprop
+  -- See https://awesomewm.org/doc/api/libraries/awful.rules.html
+  local java_rule = {name = {"Java"}, class = {"vizir-Vizir"}}
+  if awful.rules.match_any(c, java_rule) then
+    c.fullscreen = false
+    c.maximized = false
+    c.floating = false
+  end
+end
+
+function customize_awesomewm()
+  -- main entrypoint for customizaiton by comrumino
+  if widgets.is_mobile() then
+    init_battery_widget()
+  end
+  autospawn()
+
+  client.connect_signal("focus", focus_signal_callback)
+  client.connect_signal("unfocus", unfocus_signal_callback)
+  client.connect_signal("manage", manage_signal_callback)
+end
+
+customize_awesomewm()
 -- vim:se ts=2 sw=2 sts=2 et:
