@@ -1,0 +1,8 @@
+XTerm*termName: xterm-256color
+*saveLines: 4096
+*faceName: DejaVu Sans Mono for Powerline
+*renderFont: true
+*faceSize: 14
+*foreground: grey90
+*background: black
+*locale: true

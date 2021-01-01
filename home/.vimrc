@@ -8,6 +8,8 @@ set shiftwidth=4 " set indent width to four
 set softtabstop=4 " set backspace to delete four spaces
 set tabstop=4 " set tab width to four
 set showtabline=2 " set display tabline to always
+set updatetime=100 " set updatetime to 100 ms instead of default 4 seconds to improve gutter load
+set signcolumn=yes
 " configure fold settings
 " set foldmethod=indent
 " set foldlevelstart=10
@@ -15,23 +17,28 @@ set showtabline=2 " set display tabline to always
 " set mouse=a
 
 " Dependencies
+"  vim-plug
+"   git clone https://aur.archlinux.org/vim-plug.git
+"  vim-colorschemes
+"   git clone https://aur.archlinux.org/vim-colorschemes.git
+"  airline
+"   git clone https://aur.archlinux.org/vim-airline-git.git
+"   git clone https://aur.archlinux.org/vim-airline-themes-git.git
+"  powerline-fonts
+"   powerline-fonts
+"
 "  instant-rst
 "   git clone https://aur.archlinux.org/instant-rst.git
-"  markdown-preview:
+"  markdown-preview
 "   git clone https://aur.archlinux.org/python-path-and-address-git.git
 "   git clone https://aur.archlinux.org/python-grip-git.git
-"  powerline:
-"   community/powerline-fonts
 "  wordy and lexical:
 "   extra/aspell-en
 "   extra/aspell-en
-
+"
 " plug, set the runtime path to include
 call plug#begin('~/.vim/plugged')
 Plug 'tpope/vim-fugitive'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'Lokaltog/vim-powerline'
 Plug 'Yggdroot/indentLine'
 Plug 'neomake/neomake'
 Plug 'romainl/vim-qf'
@@ -47,7 +54,6 @@ call plug#end()
 
 " airline
 let g:airline_powerline_fonts = 1
-let g:powerline_pycmd = 'py3'
 if !exists('g:airline_symbols')
     let g:airline_symbols = {}
 endif
@@ -77,7 +83,7 @@ let g:airline_symbols.linenr = ''
 let g:Powerline_symbols = 'fancy'
 
 " :help neomake
-call neomake#configure#automake('rw', 750)
+call neomake#configure#automake('rw', 100)
 let g:neomake_c_enabled_makers = ['clang']
 let g:neomake_cpp_enabled_makers = ['clang']
 let g:neomake_cpp_clang_maker = {
@@ -103,19 +109,22 @@ let g:neomake_open_list = 0
 
 " :help colorscheme
 colorscheme PerfectDark
+"highlight GitGutterAdd    guifg=#009900 ctermfg=green
+"highlight GitGutterChange guifg=#bbbb00 ctermfg=green
+"highlight GitGutterChangeDelete guifg=#ff2222 ctermfg=red
+"highlight GitGutterDelete guifg=#ff2222 ctermfg=red
+
 
 " :help gitgutter
-let g:gitgutter_sign_added = 'a'
-let g:gitgutter_sign_modified = 'm'
-let g:gitgutter_sign_removed = 'r'
-let g:gitgutter_sign_removed_first_line = 'r'
-let g:gitgutter_sign_modified_removed = 'mr'
 let g:gitgutter_signs = 1
-let g:gitgutter_highlight_lines = 1
-highlight link GitGutterAddLine DiffAdd
-highlight link GitGutterChangeLine DiffAdd
-highlight link GitGutterDeleteLine DiffAdd
-highlight link GitGutterChangeDeleteLine background
+let g:gitgutter_highlight_linenrs = 1
+let g:gitgutter_sign_added = ' +'
+let g:gitgutter_sign_modified = ' 𝚫'
+let g:gitgutter_sign_removed = ' −'
+let g:gitgutter_sign_removed_first_line = '^−'
+let g:gitgutter_sign_modified_removed = ' 𝚫'
+let g:gitgutter_set_sign_backgrounds = 1
+
 
 " markdown-preview
 let vim_markdown_preview_github = 1

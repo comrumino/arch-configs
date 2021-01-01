@@ -4,7 +4,7 @@ export CHROOT="${HOME}/chroot"
 export CHROOT32="${HOME}/chroot32"
 export REPO="${HOME}/repo"
 export XMODMAP="${HOME}/.xmodmap"
-export XRESRC="${HOME}/.xresources"
+export XRESRC="${HOME}/.Xresources"
 
 # set X properties
 [[ -f "${XRESRC}" ]] && xrdb -merge -I"${HOME}" "${XRESRC}"
@@ -93,8 +93,9 @@ mykeymap
     autocutsel -selection PRIMARY -fork &
 }
 [[ -n "$(command -v xmodmap)" ]] && xmodmap "${XMODMAP}"
-[[ -n "$(command -v pulseaudio)" ]] && pulseaudio --start
-[[ -n "$(command -v xscreensaver)" ]] && xscreensaver -nosplash &
-[[ -n "$(command -v compton)" ]] && (sleep 1 && compton) &  # subshell compton in a sec so no flicker
+[[ -n "$(command -v pulseaudio)" ]] && pulseaudio --start & disown
+[[ -n "$(command -v xscreensaver)" ]] && xscreensaver -nosplash & disown
+[[ -n "$(command -v vmware-user)" ]] && vmware-user & disown
+[[ -n "$(command -v vmware-user)" ]] && sudo vmhgfs-fuse -o allow_other -o auto_unmount .host:/shared-folders /home/archie/shared-folders/
 exec awesome -a
 # vim: syntax=bash
