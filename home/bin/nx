@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+pwd_uxterms=.
+forked_uxterms=0
+new_uxterm_count=1
+
+# update variable values
+if [ ${#} -gt 2 ]; then
+    printf "Too many arguments. Expected at most two and got %s.\n" "${#}"
+    exit 1
+fi
+for arg in "$@"; do
+    # when it is a directory, 
+    if [ -d "${arg}" ]; then
+        pwd_uxterms="${arg}"
+    elif [ -n "${arg}" ] && [ "${arg}" -eq "${arg}" ]; then
+        new_uxterm_count="${arg}"
+    else
+        printf "Bad argument '%s'\n" "${arg}"
+        exit 1
+    fi
+done
+
+while [ "${forked_uxterms}" -lt "${new_uxterm_count}" ]; do
+    # "Fork"
+    (setsid uxterm -e "pushd \"${pwd_uxterms}\"; \"${SHELL}\"" &)
+    forked_uxterms=$(( forked_uxterms + 1 ))
+done
+printf "Created %s/%s uxterm instances.\n" "${forked_uxterms}" "${new_uxterm_count}"
