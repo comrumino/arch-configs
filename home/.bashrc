@@ -12,6 +12,7 @@ alias halt="sudo systemctl halt"
 alias build='arch-nspawn ${CHROOT}/root pacman -Syu; makechrootpkg -c -r ${CHROOT} -- -i'
 alias build32='arch-nspawn ${CHROOT32}/root pacman -Syu; makechrootpkg -c -r ${CHROOT32} -- -i'
 alias dirtybuild='arch-nspawn ${CHROOT}/root pacman -Syu; makechrootpkg -r ${CHROOT} -- -i'
+alias pkgcheck='shellcheck -e SC2034,SC2164,SC2154 -s bash'
 alias ls='ls --color=auto'
 alias newchroot='mkarchroot -C /etc/pacman.conf -M /etc/makepkg.conf $CHROOT/root base-devel archstrike-mirrorlist'
 alias tidy-xml='tidy -xml -i -m'
@@ -43,3 +44,5 @@ export CHROOT32="${HOME}/chroot32"
 export REPO="${HOME}/repo"
 export XMODMAP="${HOME}/.xmodmap"
 export XRESRC="${HOME}/.xresources"
+export GPG_TTY=$(tty)
+gpg-connect-agent updatestartuptty /bye >/dev/null
