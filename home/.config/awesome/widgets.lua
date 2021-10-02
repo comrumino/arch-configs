@@ -29,10 +29,10 @@ end
 
 local function battery_module_loaded()
   -- uses the linux kernel modules to check for a battery power supply
-  local filehandle = io.open(modules_file, "r")
-  local proc_modules = filehandle:read("*all")
-  filehandle:close()
-  assert(substring_exists(proc_modules, 'battery'))
+  -- local filehandle = io.open(modules_file, "r")
+  -- local proc_modules = filehandle:read("*all")
+  -- filehandle:close()
+  -- assert(substring_exists(proc_modules, 'battery'))
   -- require that capacity and status file exists
   assert(file_exists(capacity_file))
   assert(file_exists(status_file))
