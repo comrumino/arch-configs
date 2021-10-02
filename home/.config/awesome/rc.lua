@@ -229,6 +229,11 @@ root.buttons(awful.util.table.join(
 globalkeys = awful.util.table.join(
     awful.key({}, "Alt_R", multi_tap.routine,
               {description="lock screen", group="spawn"}),
+    -- laptop
+    -- awful.key({}, "F6", function () awful.util.spawn("sudo bb -d") end,
+    --           {description="Decrease backlight brightness", group="spawn"}),
+    -- awful.key({}, "F7", function () awful.util.spawn("sudo bb -i") end,
+    --           {description="Increase backlight brightness", group="spawn"}),
     awful.key({ modkey, "Control" }, "l",     function () awful.util.spawn("xscreensaver-command -lock") end,
               {description="lock screen", group="spawn"}),
     awful.key({ modkey, "Control" }, "Left",     function () awful.util.spawn("xdotool click 1") end,
