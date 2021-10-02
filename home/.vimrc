@@ -34,7 +34,6 @@ set signcolumn=yes
 "   git clone https://aur.archlinux.org/python-grip-git.git
 "  wordy and lexical:
 "   extra/aspell-en
-"   extra/aspell-en
 "
 " plug, set the runtime path to include
 call plug#begin('~/.vim/plugged')
