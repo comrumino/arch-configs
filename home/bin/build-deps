@@ -1,0 +1,170 @@
+#!/usr/bin/env python
+# pacman -S python-appdirs python-gitpython python-requests pyalpm
+# python-gitpython, pyalpm, python-requests
+import os
+import sys
+import git
+import logging
+import requests
+import pathlib
+import re
+import subprocess
+import pycman
+import appdirs
+
+
+APPNAME = pathlib.Path(__file__).stem
+logging.basicConfig(level=logging.DEBUG, format='%(levelname)s| %(message)s')
+logger = logging.getLogger(APPNAME)
+# init
+REFRESH = ['pacman', '-Sy']
+CREATE = ['mkarchroot', '-C', '{config}', '-M', '{MAKEPKG_CONF}', '{CHROOT}/root',
+          'base-devel', 'archstrike-mirrorlist']
+UPDATE = ['arch-nspawn', '{CHROOT}/root', 'pacman', '-Syu']
+# copy
+MKCOPYDIR = ['mkdir', '-pv', '{CHROOT}/{rootpkgname}']
+CLEAN_SYNC = ['rsync', '-a', '--delete', '-q', '-W', '-x', '{CHROOT}/root/', '{CHROOT}/{rootpkgname}']
+# build
+RECV_KEYS = ['arch-nspawn', '{CHROOT}/{rootpkgname}', 'gpg', '--auto-key-locate', 'wkd',
+             '--receive-keys', '{validpgpkeys}']
+BUILD = ['makechrootpkg', '-r', '{CHROOT}', '-l', '{rootpkgname}', '--', '-i']
+
+
+def extend_summary(summary, child_summary, indent='    '):
+    for i, s in enumerate(child_summary):
+        if s.startswith('├── ') or s.startswith('└── ') or s.startswith('│   '):
+            s = f'│   {s}'
+        else:
+            s = f'├── {s}'
+        child_summary[i] = s
+    i = -1
+    while child_summary[i].startswith('│   '):
+        child_summary[i] = child_summary[i].replace('│   ', '    ')
+        i -= 1
+    if child_summary[i].startswith('├── '):
+        child_summary[i] = child_summary[i].replace('├── ', '└── ')
+    summary.extend(child_summary)
+    return summary
+
+
+def aur_makepkg(pkgname, syncdbs, command_mapping):
+    """ Given an AUR package, depth-first search for other makedepends/depends to build """
+    AUR_URL = 'https://aur.archlinux.org/'
+    AUR_RPC_INFO = f'{AUR_URL}rpc/?v=5&type=info&arg[]={pkgname}'
+    AUR_RPC_SEARCH = f'{AUR_URL}rpc/?v=5&type=search&by=name&arg={pkgname}'
+    AUR_RPC_SRCINFO = f'{AUR_URL}cgit/aur.git/plain/.SRCINFO?h={{pkgname}}'
+    AUR_GIT = f'{AUR_URL}{pkgname}.git'
+    resp = requests.get(AUR_RPC_INFO)
+    if not resp.ok:
+        raise Exception(f'Status code was not between 200 and 400 for {pkgname}')
+    if resp.json()['resultcount'] == 1:
+        return_data = resp.json()['results'][0]
+    else:
+        # When an exact info match fails, the search query is used to iterate possible packages that provide pkgname
+        return_data = None
+        resp = requests.get(AUR_RPC_SEARCH)
+        for result in resp.json()['results']:
+            _pkgname = result['Name']
+            srcinfo = requests.get(AUR_RPC_SRCINFO.format(pkgname=_pkgname)).text
+            if pkgname in set(re.findall(r'(?<=provides = ).*', srcinfo)):
+                AUR_RPC_INFO = AUR_RPC_INFO.replace(pkgname, _pkgname)
+                AUR_GIT = AUR_GIT.replace(pkgname, _pkgname)
+                resp = requests.get(AUR_RPC_INFO)
+                return_data = resp.json()['results'][0]
+                break
+        if return_data is None:
+            raise Exception('Failed to locate {pkgname} on aur')
+
+    summary = []
+    for depend in return_data.get('MakeDepends', []) + return_data.get('Depends', []):
+        okay, pkg = pycman.action_sync.find_sync_package(depend, syncdbs)
+        if okay:
+            logger.info(f'Found sync target {pkg.name}')
+            continue
+        else:
+            child_summary = aur_makepkg(depend, syncdbs, command_mapping)
+            extend_summary(summary, child_summary)
+    aur_clone = command_mapping['cache'].joinpath(pkgname)
+    # Fetch/clone package using AUR git URL
+    logger.info(f'Preparing directory {aur_clone}')
+    if aur_clone.exists():
+        repo = git.Repo(aur_clone)
+        repo.remotes.origin.pull()
+    else:
+        git.Repo.clone_from(AUR_GIT, aur_clone)
+    # Check output from `makepkg --printsrcinfo PKGBUILD` for valid pgp keys to locate and receive
+    logger.info(f'Checking .SRCINFO for valid pgp keys for {pkgname}')
+    with aur_clone.joinpath('.SRCINFO').open() as h_srcinfo:
+        srcinfo = h_srcinfo.read()
+    fingerprints = set(re.findall(r'(?<=validpgpkeys = ).*', srcinfo))
+    if fingerprints:
+        command_mapping['validpgpkeys'] = ' '.join(fingerprints)
+        logger.info(f'Attempting to receive {command_mapping["validpgpkeys"]}')
+        simple_run(RECV_KEYS, command_mapping)
+    # Make package in chroot and install into chroot
+    logger.info(f'Preconditions to build {pkgname} are satisified. Get busy build!')
+    simple_run(BUILD, command_mapping, cwd=aur_clone)
+    # Glob to find .pkg.tar.zst since vcs doesn't match AUR Version
+    package_summary = [p for p in aur_clone.glob(f'{pkgname}-*.pkg.tar.zst')]
+    # Sort and take the most recent
+    package_summary = sorted(package_summary, key=lambda x: x.stat().st_mtime)[0]
+    package_summary = f'{pkgname}@{package_summary.resolve()}'
+    summary.insert(0, package_summary)
+    return summary
+
+
+def simple_run(command, command_mapping=None, sudo=True, **kwargs):
+    """ simple entry-point for consistent command execution """
+    run_cmd = command.copy()
+    if sudo:
+        run_cmd.insert(0, 'sudo')
+    if command_mapping is not None:
+        run_cmd = [s.format_map(command_mapping) for s in run_cmd]
+    completed_proc = subprocess.run(run_cmd, capture_output=True, text=True, **kwargs)
+    if completed_proc.returncode == 0:
+        return completed_proc
+    else:
+        raise RuntimeError(f'Non-zero return {run_cmd}: {completed_proc.stderr}')
+
+
+def main(rawargs):
+    CHROOT = pathlib.Path(appdirs.user_cache_dir(f'{APPNAME}-chroot'))
+    CACHE = pathlib.Path(appdirs.user_cache_dir(f'{APPNAME}-git'))
+    for path in [CHROOT, CACHE]:
+        path.mkdir(parents=True, exist_ok=True)
+    os.environ['MAKEFLAGS'] = os.environ.get('MAKEFLAGS', f'-j{os.cpu_count()}')
+    options = pycman.action_sync.parse_options(rawargs)
+    if len(options.args) == 0:
+        raise UserWarning('Provide one or more AUR packages on CLI to use this script as intended.')
+    options.config = options.config or '/etc/pacman.conf'
+    h_pacman = pycman.config.init_with_config_and_options(options)
+    command_mapping = dict(MAKEPKG_CONF=os.environ.get('MAKEPKG_CONF', '/etc/makepkg.conf'),
+                           CHROOT=CHROOT,
+                           config=options.config,
+                           cache=CACHE)
+    # Refresh sync DBs and chroot
+    logger.info("Refresh sync DBs")
+    simple_run(REFRESH)
+    if pathlib.Path(CHROOT, 'root').exists():
+        logger.info(f'Using existing archroot {CHROOT}')
+    else:
+        logger.info(f'Creating archroot {CHROOT}')
+        simple_run(CREATE, command_mapping)
+    logger.info("Updating archroot")
+    simple_run(UPDATE, command_mapping)
+    logger.info("Getting sync DBs")
+    syncdbs = {db.name: db for db in h_pacman.get_syncdbs()}
+    summary = ['Summary of build:']
+    for pkgname in options.args:
+        command_mapping['rootpkgname'] = pkgname
+        logger.info("Syncing working copy of chroot")
+        simple_run(MKCOPYDIR, command_mapping)
+        simple_run(CLEAN_SYNC, command_mapping)
+        child_summary = aur_makepkg(pkgname, syncdbs, command_mapping)
+        extend_summary(summary, child_summary)
+    print('\n'.join(summary))
+
+
+if __name__ == "__main__":
+    raw_args = sys.argv[1:]
+    main(raw_args)
