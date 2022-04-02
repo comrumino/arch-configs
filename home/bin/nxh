@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
-source "${HOME}/repo/htb/settings/.profile"
+profile="${HOME}/repo/htb/settings/.profile"
+. "${profile}"
 pwd_uxterms=${repohtb}
 forked_uxterms=0
 new_uxterm_count=1
@@ -19,11 +20,11 @@ for arg in "$@"; do
     fi
 done
 
-pushd "${pwd_uxterms}"
+pushd "${pwd_uxterms}" >/dev/null
 while [ "${forked_uxterms}" -lt "${new_uxterm_count}" ]; do
     # "Fork"
-    (setsid uxterm -e "_htb_sync && ${SHELL}" &)
+    (setsid uxterm -e "htb_sync && . \"${profile}\" && ${SHELL}" &)
     forked_uxterms=$(( forked_uxterms + 1 ))
 done
-popd
+popd >/dev/null
 printf "Created %s/%s uxterm instances.\n" "${forked_uxterms}" "${new_uxterm_count}"

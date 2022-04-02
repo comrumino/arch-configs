@@ -19,10 +19,11 @@ for arg in "$@"; do
         exit 1
     fi
 done
-
+pushd "${pwd_uxterms}" >/dev/null
 while [ "${forked_uxterms}" -lt "${new_uxterm_count}" ]; do
     # "Fork"
-    (setsid uxterm -e "pushd \"${pwd_uxterms}\"; \"${SHELL}\"" &)
+    (setsid uxterm &)
     forked_uxterms=$(( forked_uxterms + 1 ))
 done
+popd >/dev/null
 printf "Created %s/%s uxterm instances.\n" "${forked_uxterms}" "${new_uxterm_count}"
