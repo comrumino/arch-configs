@@ -1,7 +1,29 @@
-#!/usr/bin/env bash
-[[ -z $1 ]] && END=1 || END=$1
-export repohtb="${HOME}/repo/htb"
-for ((i=0; i<END; i++)); do
-    echo "$i""$END"
-    uxterm -e "cd '${repohtb}'; ./bin/_htb_sync; bash --rcfile '${repohtb}/settings/.bashrc'" &
+#!/usr/bin/env sh
+source "${HOME}/repo/htb/settings/.profile"
+pwd_uxterms=${repohtb}
+forked_uxterms=0
+new_uxterm_count=1
+
+# update variable values
+if [ ${#} -gt 2 ]; then
+    printf "Too many arguments. Expected at most two and got %s.\n" "${#}"
+    exit 1
+fi
+for arg in "$@"; do
+    # when it is a directory,
+    if [ -n "${arg}" ] && [ "${arg}" -eq "${arg}" ]; then
+        new_uxterm_count="${arg}"
+    else
+        printf "Bad argument '%s'\n" "${arg}"
+        exit 1
+    fi
 done
+
+pushd "${pwd_uxterms}"
+while [ "${forked_uxterms}" -lt "${new_uxterm_count}" ]; do
+    # "Fork"
+    (setsid uxterm -e "_htb_sync && ${SHELL}" &)
+    forked_uxterms=$(( forked_uxterms + 1 ))
+done
+popd
+printf "Created %s/%s uxterm instances.\n" "${forked_uxterms}" "${new_uxterm_count}"
