@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+[[ -z $1 ]] && END=1 || END=$1
+export repohtb="${HOME}/repo/htb"
+for ((i=0; i<END; i++)); do
+    echo "$i""$END"
+    uxterm -e "cd '${repohtb}'; ./bin/_htb_sync; bash --rcfile '${repohtb}/settings/.bashrc'" &
+done

@@ -11,10 +11,12 @@ set showtabline=2 " set display tabline to always
 set updatetime=100 " set updatetime to 100 ms instead of default 4 seconds to improve gutter load
 set signcolumn=yes
 " configure fold settings
+set nofoldenable    " disable folding
+set mmp=4096
 " set foldmethod=indent
 " set foldlevelstart=10
 " set foldcolumn=2
-" set mouse=a
+"set mouse=a
 
 " Dependencies
 "  vim-plug
@@ -30,9 +32,9 @@ set signcolumn=yes
 "  instant-rst
 "   git clone https://aur.archlinux.org/instant-rst.git
 "  markdown-preview
-"   git clone https://aur.archlinux.org/python-path-and-address-git.git
-"   git clone https://aur.archlinux.org/python-grip-git.git
+"   build-deps python-grip-git
 "  wordy and lexical:
+"   extra/aspell-en
 "   extra/aspell-en
 "
 " plug, set the runtime path to include
@@ -48,7 +50,9 @@ Plug 'powerman/vim-plugin-AnsiEsc'
 Plug 'reedes/vim-wordy'
 Plug 'reedes/vim-lexical'
 Plug 'gu-fan/InstantRst'
+Plug 'jvirtanen/vim-hcl'
 Plug 'gu-fan/riv.vim'
+Plug 'hashivim/vim-terraform'
 call plug#end() 
 
 " airline
@@ -137,6 +141,10 @@ let g:lexical#spell = 0
 let g:lexical#spelllang = ['en_us']
 let g:lexical#dictionary = ['/usr/lib/aspell/',]
 
+" detectindent
+let g:detectindent_preferred_indent = 4
+let g:detectindent_preferred_when_mixed = 1
+
 function! LexicalToggle(...) abort
     let g:lexical#spell = g:lexical#spell ? 0 : 1
     if g:lexical#spell
@@ -214,3 +222,5 @@ nnoremap <leader>p oimport pdb; pdb.set_trace()<Esc>
 nnoremap <leader>t :call UnitTest()<Esc>
 nnoremap <leader>u :call TermToggle()<Esc>
 tnoremap <ESC> <C-w>:call TermToggle()<Esc>
+" 
+let g:riv_fold_auto_update = 0
