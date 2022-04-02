@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # pacman -S python-appdirs python-gitpython python-requests pyalpm
-# python-gitpython, pyalpm, python-requests
 import os
 import sys
 import git
@@ -17,10 +16,11 @@ APPNAME = pathlib.Path(__file__).stem
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s| %(message)s')
 logger = logging.getLogger(APPNAME)
 # init
+# /var/lib/pacman/db.lck
 REFRESH = ['pacman', '-Sy']
 CREATE = ['mkarchroot', '-C', '{config}', '-M', '{MAKEPKG_CONF}', '{CHROOT}/root',
           'base-devel', 'archstrike-mirrorlist']
-UPDATE = ['arch-nspawn', '{CHROOT}/root', 'pacman', '-Syu']
+UPDATE = ['arch-nspawn', '{CHROOT}/root', 'pacman', '-Syu', '--noconfirm']
 # copy
 MKCOPYDIR = ['mkdir', '-pv', '{CHROOT}/{rootpkgname}']
 CLEAN_SYNC = ['rsync', '-a', '--delete', '-q', '-W', '-x', '{CHROOT}/root/', '{CHROOT}/{rootpkgname}']
@@ -83,6 +83,7 @@ def aur_makepkg(pkgname, syncdbs, command_mapping):
             continue
         else:
             child_summary = aur_makepkg(depend, syncdbs, command_mapping)
+            command_mapping['visited'].add(depend)
             extend_summary(summary, child_summary)
     aur_clone = command_mapping['cache'].joinpath(pkgname)
     # Fetch/clone package using AUR git URL
@@ -103,7 +104,11 @@ def aur_makepkg(pkgname, syncdbs, command_mapping):
         simple_run(RECV_KEYS, command_mapping)
     # Make package in chroot and install into chroot
     logger.info(f'Preconditions to build {pkgname} are satisified. Get busy build!')
-    simple_run(BUILD, command_mapping, cwd=aur_clone)
+    if pkgname not in command_mapping['visited']:
+        simple_run(BUILD, command_mapping, cwd=aur_clone)
+        command_mapping['visited'].add(pkgname)
+        command_mapping['visited'].add(return_data['Name'])
+
     # Glob to find .pkg.tar.zst since vcs doesn't match AUR Version
     package_summary = [p for p in aur_clone.glob(f'{pkgname}-*.pkg.tar.zst')]
     # Sort and take the most recent
@@ -132,6 +137,9 @@ def main(rawargs):
     CACHE = pathlib.Path(appdirs.user_cache_dir(f'{APPNAME}-git'))
     for path in [CHROOT, CACHE]:
         path.mkdir(parents=True, exist_ok=True)
+    db_lock = CHROOT.joinpath('root', 'var', 'lib', 'pacman', 'db.lck')
+    if db_lock.exists():
+        logger.error("Pacman DB is locked!")
     os.environ['MAKEFLAGS'] = os.environ.get('MAKEFLAGS', f'-j{os.cpu_count()}')
     options = pycman.action_sync.parse_options(rawargs)
     if len(options.args) == 0:
@@ -141,7 +149,8 @@ def main(rawargs):
     command_mapping = dict(MAKEPKG_CONF=os.environ.get('MAKEPKG_CONF', '/etc/makepkg.conf'),
                            CHROOT=CHROOT,
                            config=options.config,
-                           cache=CACHE)
+                           cache=CACHE,
+                           visited=set())
     # Refresh sync DBs and chroot
     logger.info("Refresh sync DBs")
     simple_run(REFRESH)
