@@ -10,35 +10,33 @@ set tabstop=4 " set tab width to four
 set showtabline=2 " set display tabline to always
 set updatetime=100 " set updatetime to 100 ms instead of default 4 seconds to improve gutter load
 set signcolumn=yes
+set backspace=indent,eol,start
 " configure fold settings
-set nofoldenable    " disable folding
-set mmp=4096
 " set foldmethod=indent
 " set foldlevelstart=10
 " set foldcolumn=2
-"set mouse=a
+" set mouse=a
 
 " Dependencies
 "  vim-plug
 "   git clone https://aur.archlinux.org/vim-plug.git
-"  vim-colorschemes
-"   git clone https://aur.archlinux.org/vim-colorschemes.git
-"  airline
-"   git clone https://aur.archlinux.org/vim-airline-git.git
-"   git clone https://aur.archlinux.org/vim-airline-themes-git.git
 "  powerline-fonts
 "   powerline-fonts
 "
 "  instant-rst
 "   git clone https://aur.archlinux.org/instant-rst.git
 "  markdown-preview
-"   build-deps python-grip-git
+"   git clone https://aur.archlinux.org/python-path-and-address-git.git
+"   git clone https://aur.archlinux.org/python-grip-git.git
 "  wordy and lexical:
 "   extra/aspell-en
 "   extra/aspell-en
 "
 " plug, set the runtime path to include
 call plug#begin('~/.vim/plugged')
+Plug 'flazz/vim-colorschemes'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-fugitive'
 Plug 'Yggdroot/indentLine'
 Plug 'neomake/neomake'
@@ -50,14 +48,12 @@ Plug 'powerman/vim-plugin-AnsiEsc'
 Plug 'reedes/vim-wordy'
 Plug 'reedes/vim-lexical'
 Plug 'gu-fan/InstantRst'
-Plug 'jvirtanen/vim-hcl'
 Plug 'gu-fan/riv.vim'
 Plug 'hashivim/vim-terraform'
 call plug#end() 
 
 " airline
 let g:airline_powerline_fonts = 1
-let g:powerline_pycmd = 'python3'
 if !exists('g:airline_symbols')
     let g:airline_symbols = {}
 endif
@@ -101,7 +97,7 @@ let g:neomake_javascript_enabled_makers = ['jshint']
 let g:neomake_lua_enabled_makers = ['luac']
 let g:neomake_python_flake8_maker = {'args': ['--format=default'],
     \'errorformat': '%E%f:%l: could not compile,%-Z%p^,%A%f:%l:%c: %t%n %m,%A%f:%l: %t%n %m,%-G%.%#',}
-let g:neomake_python_flake8_exe = '/usr/bin/flake8'
+let g:neomake_python_flake8_exe = '/Users/jstronz/.pyenv/shims/flake8'
 let g:neomake_python_enabled_makers = ['flake8'] " pacman -S flake8
 let g:neomake_scss_enabled_makers = ['scss_lint']
 let g:neomake_sh_enabled_makers = ['shellcheck'] " pacman -S shellcheck
@@ -140,10 +136,6 @@ let vim_markdown_preview_browser = 'chromium'
 let g:lexical#spell = 0
 let g:lexical#spelllang = ['en_us']
 let g:lexical#dictionary = ['/usr/lib/aspell/',]
-
-" detectindent
-let g:detectindent_preferred_indent = 4
-let g:detectindent_preferred_when_mixed = 1
 
 function! LexicalToggle(...) abort
     let g:lexical#spell = g:lexical#spell ? 0 : 1
@@ -215,12 +207,10 @@ endfunction
 let mapleader=","
 nnoremap <leader>o :call QuickfixToggle()<CR>
 nnoremap <leader>m :call Vim_Markdown_Preview()<CR>
-nnoremap <leader>x :call system('xclip', @0)<CR>
+nnoremap <leader>x :call system('pbcopy', @0)<CR>
 nnoremap <leader>s :call LexicalToggle()<CR>
 nnoremap <leader>a :AnsiEsc<CR>
 nnoremap <leader>p oimport pdb; pdb.set_trace()<Esc>
 nnoremap <leader>t :call UnitTest()<Esc>
 nnoremap <leader>u :call TermToggle()<Esc>
 tnoremap <ESC> <C-w>:call TermToggle()<Esc>
-" 
-let g:riv_fold_auto_update = 0
