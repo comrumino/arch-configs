@@ -1,0 +1,13 @@
+#!/usr/bin/env zsh
+while [ ${#} -gt 0 ]; do
+    f="${1}"
+    shift
+    [ ! -e "${f}" ] && continue
+    [ -d "${f}" ] && continue
+    bs="$(ls -s "${f}" | awk '{print $1}')"
+    if [ "${bs}" -eq 0 ]; then
+        bs=1
+    fi
+    dd if=/dev/zero of="${f}" bs="${bs}" count=1 conv=notrunc || exit $?
+    rm -v "${f}"
+done
