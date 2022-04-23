@@ -43,8 +43,6 @@ function profile() {
 }
 precmd_functions=(sync_prompt)
 
-export GPG_TTY="$(tty)"
-export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
 # Export
 export PATH="${HOME}/bin:$PATH"
 export ABS="${HOME}/abs"
@@ -53,7 +51,6 @@ export CHROOT32="${HOME}/chroot32"
 export REPO="${HOME}/repo"
 export PYENV_ROOT="${HOME}/.pyenv"
 export PATH="${PYENV_ROOT}/bin:$PATH"
-eval "$(pyenv init --path)"
 
 
 
@@ -81,7 +78,10 @@ is_linux && {
     gpg-connect-agent updatestartuptty /bye >/dev/null
 }
 is_darwin && {
-    export PATH="${PATH}/opt/homebrew/bin:${PATH}:/opt/homebrew/opt/coreutils/libexec/gnubin:${PATH}"
+    export PATH="/opt/homebrew/bin:${PATH}:/opt/homebrew/opt/coreutils/libexec/gnubin:${PATH}"
     gpgconf --launch gpg-agent
 }
 
+export GPG_TTY="$(tty)"
+export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+eval "$(pyenv init --path)"
