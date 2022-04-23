@@ -1,0 +1,8 @@
+[user]
+	name = comrumino
+	email = comrumino@archstrike.org
+	signingKey = 9340BB0E68F569CF975641DD0E6361CF3E941F19!
+[log]
+	showSignature = true
+[commit]
+	gpgsign = true
