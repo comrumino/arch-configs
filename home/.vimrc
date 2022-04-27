@@ -17,7 +17,7 @@ set backspace=indent,eol,start
 " set foldcolumn=2
 " set mouse=a
 
-" Dependencies
+" Dependencies (Arch Linux)
 "  vim-plug
 "   git clone https://aur.archlinux.org/vim-plug.git
 "  powerline-fonts
@@ -30,7 +30,19 @@ set backspace=indent,eol,start
 "   git clone https://aur.archlinux.org/python-grip-git.git
 "  wordy and lexical:
 "   extra/aspell-en
-"   extra/aspell-en
+"
+" Dependencies (macOS)
+"  vim-plug
+"   see https://github.com/junegunn/vim-plug
+"  powerline-fonts
+"   see https://github.com/powerline/fonts
+"  instant-rst
+"   pip install git+https://github.com/gu-fan/instant-rst.py.git
+"  markdown-preview
+"   pip install git+https://github.com/joeyespo/path-and-address.git
+"   pip install git+https://github.com/joeyespo/grip.git
+"  wordy and lexical:
+"   brew install aspell
 "
 " plug, set the runtime path to include
 call plug#begin('~/.vim/plugged')
