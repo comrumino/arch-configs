@@ -21,7 +21,8 @@ set backspace=indent,eol,start
 "  vim-plug
 "   git clone https://aur.archlinux.org/vim-plug.git
 "  powerline-fonts
-"   powerline-fonts
+"   git clone https://aur.archlinux.org/powerline-fonts-git.git
+"   fc-cache -frv && xset fp rehash
 "
 "  instant-rst
 "   git clone https://aur.archlinux.org/instant-rst.git
