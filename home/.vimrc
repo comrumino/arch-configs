@@ -108,10 +108,9 @@ let g:neomake_html_enabled_makers = ['html-angular-validate'] " npm install html
 let g:neomake_java_javac_args = ['-cp', '.']
 let g:neomake_javascript_enabled_makers = ['jshint']
 let g:neomake_lua_enabled_makers = ['luac']
+let g:neomake_python_enabled_makers = ['flake8'] " pacman -S flake8
 let g:neomake_python_flake8_maker = {'args': ['--format=default'],
     \'errorformat': '%E%f:%l: could not compile,%-Z%p^,%A%f:%l:%c: %t%n %m,%A%f:%l: %t%n %m,%-G%.%#',}
-let g:neomake_python_flake8_exe = '/Users/jstronz/.pyenv/shims/flake8'
-let g:neomake_python_enabled_makers = ['flake8'] " pacman -S flake8
 let g:neomake_scss_enabled_makers = ['scss_lint']
 let g:neomake_sh_enabled_makers = ['shellcheck'] " pacman -S shellcheck
 let g:neomake_yaml_enabled_makers = ['yamllint'] " AUR yamllint
@@ -227,3 +226,4 @@ nnoremap <leader>p oimport pdb; pdb.set_trace()<Esc>
 nnoremap <leader>t :call UnitTest()<Esc>
 nnoremap <leader>u :call TermToggle()<Esc>
 tnoremap <ESC> <C-w>:call TermToggle()<Esc>
+au BufNewFile,BufRead *{,.log,.err,.info,.warn,.crit,.notice}{,.[0-9]*,-[0-9]*} setf messages
