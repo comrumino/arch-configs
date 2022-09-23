@@ -37,22 +37,23 @@ function sync_prompt() {
     }
 }
 function profile() {
-  if aws configure --profile "${1}" list >/dev/null; then
-    export AWS_PROFILE="${1}"
+  profile_name="$1"
+  if aws configure list-profiles | grep -s "$profile_name" &>/dev/null; then
+    default_region="$(aws configure get region 2>/dev/null)"
+    default_region="${default_region:-us-east-1}"
+    profile_region="$(aws configure get region --profile "$profile_name" 2>/dev/null)"
+    profile_region="${profile_region:-${default_region}}"
+    export AWS_PROFILE="$profile_name"
+    export AWS_REGION="$profile_region"
   fi
 }
 precmd_functions=(sync_prompt)
 
 # Export
-export PATH="${HOME}/bin:$PATH"
 export ABS="${HOME}/abs"
 export CHROOT="${HOME}/chroot"
 export CHROOT32="${HOME}/chroot32"
 export REPO="${HOME}/repo"
-export PYENV_ROOT="${HOME}/.pyenv"
-export PATH="${PYENV_ROOT}/bin:$PATH"
-
-
 
 # in case not starting xorg, export env anyway
 [[ -f "/usr/bin/vim" ]] && export VISUAL="vim" && export EDITOR="${VISUAL}"
@@ -78,7 +79,8 @@ is_linux && {
     gpg-connect-agent updatestartuptty /bye >/dev/null
 }
 is_darwin && {
-    export PATH="/opt/homebrew/bin:${PATH}:/opt/homebrew/opt/coreutils/libexec/gnubin:${PATH}"
+    # Assuming macOS ARM
+    [[ "${PATH}" != *"homebrew/bin"* ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
     gpgconf --launch gpg-agent
 }
 
