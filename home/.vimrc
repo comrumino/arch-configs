@@ -27,8 +27,8 @@ set backspace=indent,eol,start
 "  instant-rst
 "   git clone https://aur.archlinux.org/instant-rst.git
 "  markdown-preview
-"   git clone https://aur.archlinux.org/python-path-and-address-git.git
-"   git clone https://aur.archlinux.org/python-grip-git.git
+"   pyenv exec pip install git+https://github.com/joeyespo/path-and-address.git
+"   pyenv exec pip install git+https://github.com/joeyespo/grip.git
 "  wordy and lexical:
 "   extra/aspell-en
 "
@@ -219,10 +219,11 @@ endfunction
 let mapleader=","
 nnoremap <leader>o :call QuickfixToggle()<CR>
 nnoremap <leader>m :call Vim_Markdown_Preview()<CR>
-nnoremap <leader>x :call system('pbcopy', @0)<CR>
+nnoremap <leader>g :call system('grip -b &')<CR>
+nnoremap <leader>x :call system('xclip', @0)<CR>
 nnoremap <leader>s :call LexicalToggle()<CR>
 nnoremap <leader>a :AnsiEsc<CR>
-nnoremap <leader>p oimport pdb; pdb.set_trace()<Esc>
+nnoremap <leader>b obreakpoint()<Esc>
 nnoremap <leader>t :call UnitTest()<Esc>
 nnoremap <leader>u :call TermToggle()<Esc>
 tnoremap <ESC> <C-w>:call TermToggle()<Esc>
