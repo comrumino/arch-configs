@@ -96,6 +96,7 @@ let g:airline_symbols.linenr = ''
 let g:Powerline_symbols = 'fancy'
 
 " :help neomake
+let g:neomake_logfile = '/tmp/neomake.log'
 call neomake#configure#automake('rw', 100)
 let g:neomake_c_enabled_makers = ['clang']
 let g:neomake_cpp_enabled_makers = ['clang']
@@ -113,6 +114,8 @@ let g:neomake_python_flake8_maker = {'args': ['--format=default'],
     \'errorformat': '%E%f:%l: could not compile,%-Z%p^,%A%f:%l:%c: %t%n %m,%A%f:%l: %t%n %m,%-G%.%#',}
 let g:neomake_scss_enabled_makers = ['scss_lint']
 let g:neomake_sh_enabled_makers = ['shellcheck'] " pacman -S shellcheck
+let g:neomake_zsh_enabled_makers = ['shellcheck'] " pacman -S shellcheck
+let g:neomake_shellcheck_args =  ['-fgcc', '-x', '-s', 'bash'] " Treat zsh as bash b/c of lack of support
 let g:neomake_yaml_enabled_makers = ['yamllint'] " AUR yamllint
 let g:neomake_place_signs = 0
 let g:neomake_highlight_columns = 0 "help neomake-highlight
@@ -224,6 +227,7 @@ nnoremap <leader>x :call system('xclip', @0)<CR>
 nnoremap <leader>s :call LexicalToggle()<CR>
 nnoremap <leader>a :AnsiEsc<CR>
 nnoremap <leader>b obreakpoint()<Esc>
+nnoremap <leader>i o__import__('code').interact(local=locals() \| globals())<Esc>
 nnoremap <leader>t :call UnitTest()<Esc>
 nnoremap <leader>u :call TermToggle()<Esc>
 tnoremap <ESC> <C-w>:call TermToggle()<Esc>
