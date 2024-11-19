@@ -1,0 +1,107 @@
+#!/usr/bin/env python
+import concurrent.futures
+import sys
+import logging
+import zlib
+import random
+import argparse
+from functools import partial
+
+
+COMPARE_METHODS = ['basic', 'crc32']
+logger = logging.getLogger('verifywipe')
+
+
+def get_args():
+    parser = argparse.ArgumentParser(prog='WipeVerify', description='Verify drive is wiped')
+    parser.add_argument('-c', '--compare-method', choices=COMPARE_METHODS, default=COMPARE_METHODS[0],
+                        help='Comparison method to use')
+    parser.add_argument('-d', '--drive', required=True, help='Name of drive (e.g., sda)')
+    parser.add_argument('-s', '--samples', type=int, default=2 ** 16, help='Number of locations to sample')
+    parser.add_argument('-e', '--expected', default=b'\x00', type=bytes, help='Expected value of data')
+    parser.add_argument('-r', '--read-bytes', default=512 * 1024, type=int, help='Read n-bytes at a time')
+    parser.add_argument('-q', '--quiet', action='store_true', help='Enabled debug logging')
+    parser.add_argument('-o', '--output', type=str, nargs='?', help='Log output to file path')
+    return parser.parse_args()
+
+
+def setup_logger():
+    args = get_args()
+    opts = {}
+    opts['level'] = logging.DEBUG
+    opts['format'] = '%(asctime)s %(levelname)s %(name)s[%(threadName)s]: %(message)s'
+    opts['datefmt'] = '%b %d %H:%M:%S'
+    if args.quiet:
+        opts['level'] = logging.ERROR
+    if args.output:
+        opts['filename'] = args.output
+    logging.basicConfig(**opts)
+
+
+def _is_data_equal(expected_data, data, *, data_func):
+    """Verify data is equal by applying data_func. Assume expected data was already transformed."""
+    if data_func is None:
+        return data == expected_data
+    else:
+        return data_func(data) == expected_data
+
+
+def get_compare_func(args):
+    expected_data = args.expected * args.read_bytes
+    if args.compare_method == 'basic':
+        return partial(_is_data_equal, expected_data, data_func=None)
+    elif args.compare_method == 'crc32':
+        expected_data = zlib.crc32(expected_data)
+        return partial(_is_data_equal, expected_data, data_func=zlib.crc32)
+    else:
+        raise NotImplementedError(f"Support for{args.compare_method} has not been implemented within is_zero_wiped.")
+
+
+def is_zero_wiped(data, compare_func):
+    return compare_func(data)
+
+
+def main():
+    args = get_args()
+    with open(f"/dev/{args.drive}", "rb") as hdrive:
+        size_in_bytes = hdrive.seek(0, 2)
+        if size_in_bytes / 4 < args.samples * args.read_bytes:
+            raise ValueError("Sampling more than 25% of the disk defeats the purpose of sampling.")
+        first_loc = 0
+        last_loc = size_in_bytes - args.read_bytes
+        locations_sampled = {first_loc, last_loc}  # Always include first location and last
+        compare_func = get_compare_func(args)
+        while len(locations_sampled) < args.samples:
+            location = random.randrange(first_loc, last_loc, args.read_bytes)
+            if location not in locations_sampled:
+                locations_sampled.add(location)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+        future_to_loc = {executor.submit(is_location_wiped, args, loc, compare_func): loc for loc in locations_sampled}
+        exit_code = 0
+        for future in concurrent.futures.as_completed(future_to_loc):
+            loc = future_to_loc[future]
+            try:
+                is_wiped = future.result()
+                if not is_wiped:
+                    exit_code = max(exit_code, 1)
+            except Exception:
+                logger.exception(f'Failed to handle location {loc}')
+                exit_code = 2
+        logger.debug(f"Exiting with status {exit_code}...")
+        sys.exit(exit_code)
+
+
+def is_location_wiped(args, location, compare_func):
+    with open(f"/dev/{args.drive}", "rb") as hdrive:
+        hdrive.seek(location)
+        data = hdrive.read(args.read_bytes)
+        if (result := is_zero_wiped(data, compare_func)) is True:
+            logger.debug(f'Location {location} is zero wiped')
+        else:
+            logger.error(f'Location {location} is not zero wiped')
+        return result
+
+
+if __name__ == '__main__':
+    setup_logger()
+    main()
